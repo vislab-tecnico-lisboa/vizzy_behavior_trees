@@ -1,0 +1,13 @@
+<root>
+    <TreeNodesModel>
+        <Action ID="DetectFaces">
+            <input_port name="face_topic"/>
+        </Action>
+        <Action ID="Speak">
+            <input_port name="language" type="std::string"/>
+            <input_port name="utterance" type="std::string"/>
+            <input_port name="voice" type="std::string"/>
+        </Action>
+    </TreeNodesModel>
+</root>
+

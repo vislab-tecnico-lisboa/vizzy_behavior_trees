@@ -1,0 +1,24 @@
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <ReactiveSequence>
+            <AlwaysSuccess/>
+            <Sequence>
+                <AlwaysSuccess/>
+                <SetBlackboard value="lol" output_key="cumprimento"/>
+            </Sequence>
+            <Action voice="Joaquim" ID="Speak" language="pt_PT" utterance="{cumprimento}"/>
+            <SetBlackboard value="Obrigado" output_key="cumprimento"/>
+        </ReactiveSequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="Speak">
+            <input_port name="language" type="std::string"/>
+            <input_port name="utterance" type="std::string"/>
+            <input_port name="voice" type="std::string"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+
