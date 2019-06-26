@@ -1,18 +1,38 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Parallel threshold="3">
-            <Action name="Vizzy" goal_pose="1;2;3;4;5;6;7" action_name="move_base" frame_id="/base_link" ID="MoveBase"/>
-            <Action name="Geebot" goal_pose="1;2;3;4;5;6;7" action_name="geebotbase" frame_id="/base_link" ID="MoveBase"/>
-            <Action name="VizzyDuplicate" goal_pose="7;6;5;4;3;2;1" action_name="move_base" frame_id="/base_footprint" ID="MoveBase"/>
-        </Parallel>
+        <ReactiveSequence>
+            <Action seconds="5" ID="RunForXSeconds" result="SUCCESS"/>
+            <SetBlackboard output_key="cumprimento" value="Obrigado"/>
+            <BlackboardCheckString value_A="{cumprimento}" return_on_mismatch="SUCCESS" value_B="Olá">
+                <AlwaysFailure/>
+            </BlackboardCheckString>
+            <Action voice="Joaquim" utterance="{cumprimento}" language="pt_PT" ID="Speak"/>
+        </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
+        <Action ID="DetectFaces">
+            <output_port name="faceListOut"/>
+            <input_port name="face_topic"/>
+        </Action>
+        <Action ID="FaceCounter">
+            <input_port name="faceListIn"/>
+            <input_port name="number_faces"/>
+        </Action>
         <Action ID="MoveBase">
-            <input_port name="action_name" type="std::string"/>
-            <input_port name="frame_id" type="std::string"/>
-            <input_port name="goal_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
+            <input_port name="action_name"/>
+            <input_port name="frame_id"/>
+            <input_port name="goal_pose"/>
+        </Action>
+        <Action ID="RunForXSeconds">
+            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
+            <input_port default="5" name="seconds">Time in seconds</input_port>
+        </Action>
+        <Action ID="Speak">
+            <input_port type="std::string" name="language"/>
+            <input_port type="std::string" name="utterance"/>
+            <input_port type="std::string" name="voice"/>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

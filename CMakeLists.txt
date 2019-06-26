@@ -52,6 +52,9 @@ include_directories(
 add_library(vizzy_actions STATIC
   src/actions/speech/speech_actions.cpp
   src/actions/navigation/move_base_actions.cpp
+  src/actions/general/general.cpp
+  src/actions/gaze/gaze_actions.cpp
+  src/conditions/general/general.cpp
 )
 target_link_libraries(vizzy_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
 set_target_properties(vizzy_actions PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

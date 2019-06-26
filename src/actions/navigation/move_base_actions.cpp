@@ -7,7 +7,6 @@ std::map<std::string, bool> MoveBaseActionBT::_moveBaseClientsInitializing;
 BT::NodeStatus MoveBaseActionBT::tick()
 {
 
-
     move_base_msgs::MoveBaseGoal goal;
 
     BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("goal_pose");
@@ -73,6 +72,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
         ROS_INFO_STREAM("Found action server of: " << action_name.value()); 
         _moveBaseClients[action_name.value()] = client_PTR;
+        ROS_INFO_STREAM("Number of move_base clients: " << _moveBaseClients.size());
 
     }else
     {

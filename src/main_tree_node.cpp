@@ -11,6 +11,7 @@
 //Includes for nodes
 #include <vizzy_behavior_trees/actions/speech_actions.hpp>
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
+#include <vizzy_behavior_trees/actions/general.hpp>
 
 
 //Fancy logging for Groot
@@ -42,6 +43,7 @@ int main(int argc, char **argv)
 
   factory.registerBuilder<SpeechActionBT>("Speak", builder_speech);
   factory.registerNodeType<MoveBaseActionBT>("MoveBase");
+  factory.registerNodeType<RunForXSeconds>("RunForXSeconds");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
