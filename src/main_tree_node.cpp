@@ -3,11 +3,14 @@
 #include <behaviortree_cpp/bt_factory.h>
 #include <sstream>
 #include <ros/package.h>
-#include <vizzy_behavior_trees/speech_actions.hpp>
 
 //Includes for all the actions that Vizzy can do
 #include <vizzy_msgs/GazeAction.h>
 #include <vizzy_msgs/CartesianAction.h>
+
+//Includes for nodes
+#include <vizzy_behavior_trees/actions/speech_actions.hpp>
+#include <vizzy_behavior_trees/actions/move_base_actions.hpp>
 
 
 //Fancy logging for Groot
@@ -38,6 +41,7 @@ int main(int argc, char **argv)
     };
 
   factory.registerBuilder<SpeechActionBT>("Speak", builder_speech);
+  factory.registerNodeType<MoveBaseActionBT>("MoveBase");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

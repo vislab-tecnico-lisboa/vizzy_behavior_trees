@@ -5,11 +5,7 @@
 #include <woz_dialog_msgs/SpeechGoal.h>
 #include <woz_dialog_msgs/SpeechAction.h>
 #include <woz_dialog_msgs/SpeechFeedback.h>
-
-inline void SleepMS(int ms)
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}
+#include <vizzy_behavior_trees/util.hpp>
 
 
 
@@ -21,6 +17,11 @@ class SpeechActionBT : public BT::AsyncActionNode
             : AsyncActionNode(name, config),
             _speech_client_PTR(speech_client)
         {
+            std::cout << "Initializing" << std::endl;
+            std::string ut;
+            getInput("utterance", ut);
+            std::cout << ut << std::endl;
+            std::cout << "Done initializing" << std::endl;
         }
 
         static BT::PortsList providedPorts()

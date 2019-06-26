@@ -1,5 +1,4 @@
-#include <vizzy_behavior_trees/speech_actions.hpp>
-#include <behaviortree_cpp/bt_factory.h>
+#include <vizzy_behavior_trees/actions/speech_actions.hpp>
 
 
 BT::NodeStatus SpeechActionBT::tick()

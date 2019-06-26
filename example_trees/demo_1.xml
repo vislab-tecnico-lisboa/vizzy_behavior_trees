@@ -1,22 +1,18 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <ReactiveSequence>
-            <AlwaysSuccess/>
-            <Sequence>
-                <AlwaysSuccess/>
-                <SetBlackboard value="lol" output_key="cumprimento"/>
-            </Sequence>
-            <Action voice="Joaquim" ID="Speak" language="pt_PT" utterance="{cumprimento}"/>
-            <SetBlackboard value="Obrigado" output_key="cumprimento"/>
-        </ReactiveSequence>
+        <Parallel threshold="3">
+            <Action name="Vizzy" goal_pose="1;2;3;4;5;6;7" action_name="move_base" frame_id="/base_link" ID="MoveBase"/>
+            <Action name="Geebot" goal_pose="1;2;3;4;5;6;7" action_name="geebotbase" frame_id="/base_link" ID="MoveBase"/>
+            <Action name="VizzyDuplicate" goal_pose="7;6;5;4;3;2;1" action_name="move_base" frame_id="/base_footprint" ID="MoveBase"/>
+        </Parallel>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
-        <Action ID="Speak">
-            <input_port name="language" type="std::string"/>
-            <input_port name="utterance" type="std::string"/>
-            <input_port name="voice" type="std::string"/>
+        <Action ID="MoveBase">
+            <input_port name="action_name" type="std::string"/>
+            <input_port name="frame_id" type="std::string"/>
+            <input_port name="goal_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   vizzy_msgs
   woz_dialog_msgs
   actionlib
+  move_base_msgs
 )
 
 
@@ -31,7 +32,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES speech_actions
+  LIBRARIES vizzy_actions
   CATKIN_DEPENDS actionlib_msgs behaviortree_cpp_v3 geometry_msgs roscpp rospy std_msgs vizzy_msgs woz_dialog_msgs
 #  DEPENDS system_lib
 )
@@ -48,16 +49,17 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(speech_actions STATIC
+add_library(vizzy_actions STATIC
   src/actions/speech/speech_actions.cpp
+  src/actions/navigation/move_base_actions.cpp
 )
-target_link_libraries(speech_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
-set_target_properties(speech_actions PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+target_link_libraries(vizzy_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
+set_target_properties(vizzy_actions PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 
 add_executable(main_tree_node src/main_tree_node.cpp)
 
 target_link_libraries(main_tree_node
-  ${catkin_LIBRARIES} ${BEHAVIOR_TREE_LIBRARY} speech_actions
+  ${catkin_LIBRARIES} ${BEHAVIOR_TREE_LIBRARY} vizzy_actions
 )
 
