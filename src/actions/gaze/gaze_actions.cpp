@@ -49,6 +49,8 @@ BT::NodeStatus GazeActionBT::tick()
         }
     }
 
+    ROS_ERROR("52");
+
     std::shared_ptr<GazeClient> client_PTR;
 
     if(action_client_pair == _gazeClients.end())
