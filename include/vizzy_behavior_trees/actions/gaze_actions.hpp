@@ -63,7 +63,6 @@ class GazeActionBT : public BT::AsyncActionNode
         virtual void halt() override;
 
     private:
-        GazeClient *_gaze_client_PTR;
         std::atomic_bool _halt_requested;
         static std::map<std::string, std::shared_ptr<GazeClient>> _gazeClients;
         static std::map<std::string, bool> _gazeClientsInitializing;

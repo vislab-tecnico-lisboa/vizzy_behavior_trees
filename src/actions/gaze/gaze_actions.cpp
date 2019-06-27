@@ -49,6 +49,8 @@ BT::NodeStatus GazeActionBT::tick()
         }
     }
 
+    ROS_ERROR("52");
+
     std::shared_ptr<GazeClient> client_PTR;
 
     if(action_client_pair == _gazeClients.end())
@@ -80,6 +82,8 @@ BT::NodeStatus GazeActionBT::tick()
         client_PTR = action_client_pair->second;
     }
 
+    ROS_ERROR("85");
+
     geometry_msgs::PoseStamped poseStamped = pose.value();
 
     goal.type = goal.CARTESIAN;
@@ -94,15 +98,24 @@ BT::NodeStatus GazeActionBT::tick()
 
     goal.fixation_point.point = poseStamped.pose.position;
 
+    ROS_ERROR("101");
 
     std::cout << "[Gaze]: Started." << std::endl <<
         "Fixation point: " << goal << std::endl;
 
     _halt_requested.store(false);
 
-    _gaze_client_PTR->sendGoal(goal);
+    ROS_ERROR("108");
 
-    auto move_state = _gaze_client_PTR->getState();
+    client_PTR->isServerConnected();
+
+    client_PTR->sendGoal(goal);
+    
+    ROS_ERROR("112");
+    
+    auto move_state = client_PTR->getState();
+
+    ROS_ERROR("116");
     
 
     return BT::NodeStatus::SUCCESS;
