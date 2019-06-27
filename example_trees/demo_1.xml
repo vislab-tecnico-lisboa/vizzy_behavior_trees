@@ -1,17 +1,37 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <ReactiveSequence>
-            <Action seconds="5" ID="WaitForXSeconds" result="SUCCESS"/>
-            <SetBlackboard output_key="cumprimento" value="Obrigado"/>
-            <BlackboardCheckString value_A="{cumprimento}" return_on_mismatch="SUCCESS" value_B="Olá">
-                <AlwaysFailure/>
-            </BlackboardCheckString>
-            <Action voice="Joaquim" utterance="{cumprimento}" language="pt_PT" ID="Speak"/>
-        </ReactiveSequence>
+        <SequenceStar>
+            <Action ID="Speak" name="Hungry" voice="Joaquim" language="pt_PT" utterance="Tenho fome"/>
+            <Action seconds="2" result="SUCCESS" ID="WaitForXSeconds" name="Wait2Seconds"/>
+            <Fallback>
+                <SequenceStar>
+                    <RetryUntilSuccesful num_attempts="3">
+                        <Action frame_id="map" goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" ID="MoveBase" name="Go to first point" action_name="move_base"/>
+                    </RetryUntilSuccesful>
+                    <Parallel threshold="2">
+                        <Repeat num_cycles="10">
+                            <Action ID="Speak" voice="Joaquim" language="pt_PT" utterance="bip bip"/>
+                        </Repeat>
+                        <Action ID="Charge" action_name="charging_action"/>
+                    </Parallel>
+                </SequenceStar>
+            </Fallback>
+        </SequenceStar>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
+        <Condition ID="BiggerThan">
+            <input_port name="A"/>
+            <input_port name="B"/>
+        </Condition>
+        <Action ID="Charge">
+            <input_port name="action_name"/>
+        </Action>
+        <Action ID="DetectBlocks">
+            <output_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
+            <input_port type="std::string" name="block_topic"/>
+        </Action>
         <Action ID="DetectFaces">
             <output_port name="faceListOut"/>
             <input_port name="face_topic"/>
@@ -20,19 +40,29 @@
             <input_port name="faceListIn"/>
             <input_port name="number_faces"/>
         </Action>
+        <Action ID="GazeAtTarget">
+            <input_port name="action_name"/>
+            <input_port name="fixation_pose"/>
+            <input_port name="frame_id"/>
+        </Action>
         <Action ID="MoveBase">
             <input_port name="action_name"/>
             <input_port name="frame_id"/>
             <input_port name="goal_pose"/>
         </Action>
-        <Action ID="WaitForXSeconds">
-            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
-            <input_port default="5" name="seconds">Time in seconds</input_port>
+        <Action ID="SelectBlock">
+            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
+            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
+            <input_port type="std::string" name="position_in_list"/>
         </Action>
         <Action ID="Speak">
             <input_port type="std::string" name="language"/>
             <input_port type="std::string" name="utterance"/>
             <input_port type="std::string" name="voice"/>
+        </Action>
+        <Action ID="WaitForXSeconds">
+            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
+            <input_port default="5" name="seconds">Time in seconds</input_port>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

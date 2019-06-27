@@ -12,7 +12,7 @@
 #include <vizzy_behavior_trees/actions/speech_actions.hpp>
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
 #include <vizzy_behavior_trees/actions/general.hpp>
-
+#include <vizzy_behavior_trees/actions/charging_actions.hpp>
 
 //Fancy logging for Groot
 #include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
@@ -44,6 +44,7 @@ int main(int argc, char **argv)
   factory.registerBuilder<SpeechActionBT>("Speak", builder_speech);
   factory.registerNodeType<MoveBaseActionBT>("MoveBase");
   factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
+  factory.registerNodeType<ChargeActionBT>("Charge");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
   BT::PublisherZMQ publisher_zmq(tree);
 
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(50);
 
   while (ros::ok())
   {
