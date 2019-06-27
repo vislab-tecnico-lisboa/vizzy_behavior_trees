@@ -52,16 +52,17 @@ include_directories(
 add_library(vizzy_actions STATIC
   src/actions/speech/speech_actions.cpp
   src/actions/navigation/move_base_actions.cpp
+  src/actions/navigation/charging_actions.cpp
   src/actions/general/general.cpp
   src/actions/gaze/gaze_actions.cpp
   src/conditions/general/general.cpp
 )
+add_dependencies(vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp)
 target_link_libraries(vizzy_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
 set_target_properties(vizzy_actions PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 
 add_executable(main_tree_node src/main_tree_node.cpp)
-
 target_link_libraries(main_tree_node
   ${catkin_LIBRARIES} ${BEHAVIOR_TREE_LIBRARY} vizzy_actions
 )

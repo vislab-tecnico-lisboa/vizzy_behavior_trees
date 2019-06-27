@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
   factory.registerBuilder<SpeechActionBT>("Speak", builder_speech);
   factory.registerNodeType<MoveBaseActionBT>("MoveBase");
-  factory.registerNodeType<RunForXSeconds>("RunForXSeconds");
+  factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

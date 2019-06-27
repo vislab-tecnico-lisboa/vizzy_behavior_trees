@@ -2,7 +2,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <ReactiveSequence>
-            <Action seconds="5" ID="RunForXSeconds" result="SUCCESS"/>
+            <Action seconds="5" ID="WaitForXSeconds" result="SUCCESS"/>
             <SetBlackboard output_key="cumprimento" value="Obrigado"/>
             <BlackboardCheckString value_A="{cumprimento}" return_on_mismatch="SUCCESS" value_B="Olá">
                 <AlwaysFailure/>
@@ -25,7 +25,7 @@
             <input_port name="frame_id"/>
             <input_port name="goal_pose"/>
         </Action>
-        <Action ID="RunForXSeconds">
+        <Action ID="WaitForXSeconds">
             <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
             <input_port default="5" name="seconds">Time in seconds</input_port>
         </Action>

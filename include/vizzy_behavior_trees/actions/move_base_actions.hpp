@@ -67,7 +67,6 @@ class MoveBaseActionBT : public BT::AsyncActionNode
         virtual void halt() override;
 
     private:
-        MoveBaseClient *_movebase_client_PTR;
         std::atomic_bool _halt_requested;
         static std::map<std::string, std::shared_ptr<MoveBaseClient>> _moveBaseClients;
         static std::map<std::string, bool> _moveBaseClientsInitializing;

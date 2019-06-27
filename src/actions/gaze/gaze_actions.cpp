@@ -80,6 +80,7 @@ BT::NodeStatus GazeActionBT::tick()
         client_PTR = action_client_pair->second;
     }
 
+
     geometry_msgs::PoseStamped poseStamped = pose.value();
 
     goal.type = goal.CARTESIAN;
@@ -94,16 +95,16 @@ BT::NodeStatus GazeActionBT::tick()
 
     goal.fixation_point.point = poseStamped.pose.position;
 
-
     std::cout << "[Gaze]: Started." << std::endl <<
         "Fixation point: " << goal << std::endl;
 
     _halt_requested.store(false);
 
-    _gaze_client_PTR->sendGoal(goal);
+    client_PTR->isServerConnected();
 
-    auto move_state = _gaze_client_PTR->getState();
+    client_PTR->sendGoal(goal);
     
+    auto move_state = client_PTR->getState();
 
     return BT::NodeStatus::SUCCESS;
 

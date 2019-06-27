@@ -1,6 +1,6 @@
 #include <vizzy_behavior_trees/actions/general.hpp>
 
-BT::NodeStatus RunForXSeconds::tick()
+BT::NodeStatus WaitForXSeconds::tick()
 {
     double time_d;
 
@@ -44,7 +44,7 @@ BT::NodeStatus RunForXSeconds::tick()
     
 }
 
-void RunForXSeconds::halt()
+void WaitForXSeconds::halt()
 {
     _halt_requested.store(true);
 }

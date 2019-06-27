@@ -88,9 +88,9 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
     _halt_requested.store(false);
 
-    _movebase_client_PTR->sendGoal(goal);
+    client_PTR->sendGoal(goal);
 
-    auto move_state = _movebase_client_PTR->getState();
+    auto move_state = client_PTR->getState();
     
     setStatus(BT::NodeStatus::RUNNING);
 
@@ -98,16 +98,16 @@ BT::NodeStatus MoveBaseActionBT::tick()
     {
         if(_halt_requested)
         {
-            _movebase_client_PTR->cancelAllGoals();
+            client_PTR->cancelAllGoals();
             return BT::NodeStatus::FAILURE;
         }
 
-        move_state = _movebase_client_PTR->getState();
+        move_state = client_PTR->getState();
         SleepMS(100);
     }
 
 
-    if(_movebase_client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         return BT::NodeStatus::SUCCESS;
     }else{

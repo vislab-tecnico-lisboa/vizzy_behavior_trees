@@ -4,10 +4,10 @@
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
 
-class RunForXSeconds : public BT::AsyncActionNode
+class WaitForXSeconds : public BT::AsyncActionNode
 {
     public:
-        RunForXSeconds(const std::string& name, const BT::NodeConfiguration& config)
+        WaitForXSeconds(const std::string& name, const BT::NodeConfiguration& config)
         : AsyncActionNode(name, config)
         {}
 
