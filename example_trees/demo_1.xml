@@ -2,7 +2,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <SequenceStar>
-            <Action ID="Speak" name="Hungry" voice="Joaquim" language="pt_PT" utterance="Tenho fome"/>
+            <Action ID="Speak" action_name="nuance_speech_tts" name="Hungry" voice="Joaquim" language="pt_PT" utterance="Tenho fome"/>
             <Action seconds="2" result="SUCCESS" ID="WaitForXSeconds" name="Wait2Seconds"/>
             <Fallback>
                 <SequenceStar>
@@ -11,7 +11,7 @@
                     </RetryUntilSuccesful>
                     <Parallel threshold="2">
                         <Repeat num_cycles="10">
-                            <Action ID="Speak" voice="Joaquim" language="pt_PT" utterance="bip bip"/>
+                            <Action ID="Speak" action_name="nuance_speech_ttsnuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="bip bip"/>
                         </Repeat>
                         <Action ID="Charge" action_name="charging_action"/>
                     </Parallel>
@@ -56,6 +56,7 @@
             <input_port type="std::string" name="position_in_list"/>
         </Action>
         <Action ID="Speak">
+            <input_port type="std::string" name="action_name"/>
             <input_port type="std::string" name="language"/>
             <input_port type="std::string" name="utterance"/>
             <input_port type="std::string" name="voice"/>

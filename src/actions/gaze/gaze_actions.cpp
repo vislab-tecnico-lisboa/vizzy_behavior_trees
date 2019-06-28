@@ -16,16 +16,16 @@ BT::NodeStatus GazeActionBT::tick()
 
     if(!pose)
     {
-        throw BT::RuntimeError("missing required inputs [pose]: ", 
+        throw BT::RuntimeError("missing required inputs [pose]: ",
                                 pose.error() );
     }if (!frame_id)
     {
-        throw BT::RuntimeError("missing required inputs [frame_id]: ", 
+        throw BT::RuntimeError("missing required inputs [frame_id]: ",
                                 frame_id.error() );
-    
+
     }if (!action_name)
     {
-        throw BT::RuntimeError("missing required inputs [action_name]: ", 
+        throw BT::RuntimeError("missing required inputs [action_name]: ",
                                 action_name.error() );
     }
 
@@ -36,7 +36,7 @@ BT::NodeStatus GazeActionBT::tick()
     If it isn't register it. This allows us to have multiple actions for
     the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
     duplicate action clients.*/
-    
+
 
     auto action_client_pair = _gazeClients.find(action_name.value());
     auto init_pair = _gazeClientsInitializing.find(action_name.value());
@@ -49,8 +49,6 @@ BT::NodeStatus GazeActionBT::tick()
         }
     }
 
-    ROS_ERROR("52");
-
     std::shared_ptr<GazeClient> client_PTR;
 
     if(action_client_pair == _gazeClients.end())
@@ -59,7 +57,7 @@ BT::NodeStatus GazeActionBT::tick()
 
         client_PTR = std::make_shared<GazeClient>(action_name.value());
 
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
 
         _gazeClientsInitializing[action_name.value()] = true;
 
@@ -73,7 +71,7 @@ BT::NodeStatus GazeActionBT::tick()
 
         _gazeClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Found action server of: " << action_name.value());
         _gazeClients[action_name.value()] = client_PTR;
         ROS_INFO_STREAM("Number of gaze clients: " << _gazeClients.size());
 
@@ -105,8 +103,6 @@ BT::NodeStatus GazeActionBT::tick()
     client_PTR->isServerConnected();
 
     client_PTR->sendGoal(goal);
-    
-    auto move_state = client_PTR->getState();
 
     return BT::NodeStatus::SUCCESS;
 

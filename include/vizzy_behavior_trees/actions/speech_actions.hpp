@@ -1,4 +1,4 @@
-#ifndef SPEECH_ACTIONS_BT_H
+#ifndef SPEECH_ACTIONS_BT_H_
 #define SPEECH_ACTIONS_BT_H_
 #include <behaviortree_cpp/behavior_tree.h>
 #include <actionlib/client/simple_action_client.h>
@@ -8,25 +8,20 @@
 #include <vizzy_behavior_trees/util.hpp>
 
 
+typedef actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> SpeechClient;
 
-class SpeechActionBT : public BT::AsyncActionNode 
+class SpeechActionBT : public BT::AsyncActionNode
 {
     public:
-        SpeechActionBT(const std::string& name, const BT::NodeConfiguration& config, 
-            actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> *speech_client)
-            : AsyncActionNode(name, config),
-            _speech_client_PTR(speech_client)
+        SpeechActionBT(const std::string& name, const BT::NodeConfiguration& config)
+            : AsyncActionNode(name, config)
         {
-            std::cout << "Initializing" << std::endl;
-            std::string ut;
-            getInput("utterance", ut);
-            std::cout << ut << std::endl;
-            std::cout << "Done initializing" << std::endl;
         }
 
         static BT::PortsList providedPorts()
         {
-            return{BT::InputPort<std::string>("utterance"),
+            return{BT::InputPort<std::string>("action_name"),
+                   BT::InputPort<std::string>("utterance"),
                    BT::InputPort<std::string>("voice"),
                    BT::InputPort<std::string>("language")};
         }
@@ -36,7 +31,8 @@ class SpeechActionBT : public BT::AsyncActionNode
         virtual void halt() override;
 
     private:
-        actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> *_speech_client_PTR;
+        static std::map<std::string, std::shared_ptr<SpeechClient>> _speechClients;
+        static std::map<std::string, bool> _speechClientsInitializing;
         std::atomic_bool _halt_requested;
 };
 

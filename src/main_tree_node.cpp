@@ -4,15 +4,13 @@
 #include <sstream>
 #include <ros/package.h>
 
-//Includes for all the actions that Vizzy can do
-#include <vizzy_msgs/GazeAction.h>
-#include <vizzy_msgs/CartesianAction.h>
 
 //Includes for nodes
 #include <vizzy_behavior_trees/actions/speech_actions.hpp>
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
 #include <vizzy_behavior_trees/actions/general.hpp>
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
+#include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 
 //Fancy logging for Groot
 #include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
@@ -36,15 +34,11 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
-  BT::NodeBuilder builder_speech = [speech_client](const std::string& name, const BT::NodeConfiguration& config)
-    {
-        return std::make_unique<SpeechActionBT>( name, config, speech_client);
-    };
-
-  factory.registerBuilder<SpeechActionBT>("Speak", builder_speech);
+  factory.registerNodeType<SpeechActionBT>("Speak");
   factory.registerNodeType<MoveBaseActionBT>("MoveBase");
   factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
   factory.registerNodeType<ChargeActionBT>("Charge");
+  factory.registerNodeType<CartesianActionBT>("ArmCartesian");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
@@ -60,8 +54,6 @@ int main(int argc, char **argv)
     loop_rate.sleep();
   }
 
-
-  delete speech_client;
 
   return 0;
 }

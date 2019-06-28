@@ -1,5 +1,5 @@
 #ifndef CHARGING_ACTIONS_BT_HPP_
-#define CHARGING_ACTIONS_BT_HPP_ 
+#define CHARGING_ACTIONS_BT_HPP_
 
 #include <vizzy_msgs/ChargeAction.h>
 #include <vizzy_msgs/ChargeGoal.h>
@@ -9,7 +9,7 @@
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::ChargeAction> ChargeClient;
 
-class ChargeActionBT : public BT::AsyncActionNode 
+class ChargeActionBT : public BT::AsyncActionNode
 {
     public:
 
@@ -27,7 +27,6 @@ class ChargeActionBT : public BT::AsyncActionNode
         static BT::PortsList providedPorts()
         {
             return{BT::InputPort<std::string>("action_name")};
-                   
         }
 
         BT::NodeStatus tick() override;

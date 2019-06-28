@@ -55,6 +55,7 @@ add_library(vizzy_actions STATIC
   src/actions/navigation/charging_actions.cpp
   src/actions/general/general.cpp
   src/actions/gaze/gaze_actions.cpp
+  src/actions/arms/arms_cartesian_actions.cpp
   src/conditions/general/general.cpp
 )
 add_dependencies(vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp)

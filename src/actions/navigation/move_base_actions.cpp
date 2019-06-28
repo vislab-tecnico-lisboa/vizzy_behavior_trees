@@ -15,16 +15,16 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
     if(!pose)
     {
-        throw BT::RuntimeError("missing required inputs [pose]: ", 
+        throw BT::RuntimeError("missing required inputs [pose]: ",
                                 pose.error() );
     }if (!frame_id)
     {
-        throw BT::RuntimeError("missing required inputs [frame_id]: ", 
+        throw BT::RuntimeError("missing required inputs [frame_id]: ",
                                 frame_id.error() );
-    
+
     }if (!action_name)
     {
-        throw BT::RuntimeError("missing required inputs [action_name]: ", 
+        throw BT::RuntimeError("missing required inputs [action_name]: ",
                                 action_name.error() );
     }
 
@@ -35,7 +35,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
     If it isn't register it. This allows us to have multiple actions for
     the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
     duplicate action clients.*/
-    
+
 
     auto action_client_pair = _moveBaseClients.find(action_name.value());
     auto init_pair = _moveBaseClientsInitializing.find(action_name.value());
@@ -56,7 +56,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
         client_PTR = std::make_shared<MoveBaseClient>(action_name.value());
 
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
 
         _moveBaseClientsInitializing[action_name.value()] = true;
 
@@ -70,7 +70,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
         _moveBaseClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Found action server of: " << action_name.value());
         _moveBaseClients[action_name.value()] = client_PTR;
         ROS_INFO_STREAM("Number of move_base clients: " << _moveBaseClients.size());
 
@@ -91,7 +91,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
     client_PTR->sendGoal(goal);
 
     auto move_state = client_PTR->getState();
-    
+
     setStatus(BT::NodeStatus::RUNNING);
 
     while(!move_state.isDone())
