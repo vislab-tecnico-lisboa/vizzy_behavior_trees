@@ -35,6 +35,10 @@
             <input_port name="pose"/>
             <input_port name="frame_id"/>
         </Action>
+        <Action ID="ArmRoutines">
+            <input_port name="topic"/>
+            <input_port name="gesture"/>
+        </Action>
         <Action ID="SelectBlock">
             <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
             <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>

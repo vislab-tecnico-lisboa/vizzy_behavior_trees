@@ -9,11 +9,11 @@ BT::NodeStatus WaitForXSeconds::tick()
 
     if(!time)
     {
-        throw BT::RuntimeError("missing required inputs [time]: ", 
+        throw BT::RuntimeError("missing required inputs [time]: ",
                                    time.error() );
     }if (!result)
     {
-        throw BT::RuntimeError("missing required inputs [result]: ", 
+        throw BT::RuntimeError("missing required inputs [result]: ",
                                    result.error() );
     }
 
@@ -41,7 +41,7 @@ BT::NodeStatus WaitForXSeconds::tick()
     }else{
         return BT::NodeStatus::FAILURE;
     }
-    
+
 }
 
 void WaitForXSeconds::halt()
