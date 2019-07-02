@@ -5,7 +5,6 @@
 #include <ros/ros.h>
 #include <std_msgs/Int16.h>
 #include <ros/callback_queue.h>
-#include <std_msgs/Int16.h>
 
 using namespace BT;
 

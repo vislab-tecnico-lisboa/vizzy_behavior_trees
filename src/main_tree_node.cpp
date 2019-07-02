@@ -12,6 +12,8 @@
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
+#include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
+#include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
 #include <vizzy_behavior_trees/conditions/general.hpp>
 
 //Fancy logging for Groot
@@ -47,6 +49,9 @@ int main(int argc, char **argv)
   factory.registerNodeType<CheckBool>("CheckBool");
   factory.registerNodeType<CheckChargingBT>("CheckCharging");
   factory.registerNodeType<CheckBatteryBT>("CheckBattery");
+  factory.registerNodeType<GetInt16BT>("GetInt16");
+  factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
+  factory.registerNodeType<SelectPoseStamped>("SelectPoseStamped");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

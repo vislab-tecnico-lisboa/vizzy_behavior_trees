@@ -1,4 +1,37 @@
-<root>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <ReactiveFallback>
+            <ReactiveSequence>
+                <Action topic="game_state" number="state" ID="GetInt16"/>
+                <Fallback>
+                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="0">
+                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Parado" ID="Speak"/>
+                    </BlackboardCheckInt>
+                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="1">
+                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A correr" ID="Speak"/>
+                    </BlackboardCheckInt>
+                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="2">
+                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A preparar" ID="Speak"/>
+                    </BlackboardCheckInt>
+                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="3">
+                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A validar" ID="Speak"/>
+                    </BlackboardCheckInt>
+                </Fallback>
+                <Action seconds="60" result="SUCCESS" ID="WaitForXSeconds"/>
+            </ReactiveSequence>
+            <SubTree ID="ErrorGameState"/>
+        </ReactiveFallback>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <BehaviorTree ID="ErrorGameState">
+        <SequenceStar>
+            <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Não sei o estado do jogo" ID="Speak"/>
+            <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Chamem o assistente" ID="Speak"/>
+            <Action seconds="60" result="SUCCESS" ID="WaitForXSeconds"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!-- ////////// -->
     <TreeNodesModel>
         <Action ID="ArmCartesian">
             <input_port name="action_name"/>
@@ -45,6 +78,7 @@
             <output_port name="faceListOut"/>
             <input_port name="face_topic"/>
         </Action>
+        <SubTree ID="ErrorGameState"/>
         <Action ID="FaceCounter">
             <input_port name="faceListIn"/>
             <input_port name="number_faces"/>
@@ -88,5 +122,6 @@
             <input_port name="seconds" default="5">Time in seconds</input_port>
         </Action>
     </TreeNodesModel>
+    <!-- ////////// -->
 </root>
 
