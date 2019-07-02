@@ -108,3 +108,21 @@ void ChargeActionBT::halt()
     _halt_requested.store(true);
 }
 
+//CheckBattery
+BT::NodeStatus CheckBatteryBT::tick()
+{
+    vizzy_msgs::BatteryState srv;
+    
+    if(!client.call(srv))
+    {
+        return BT::NodeStatus::FAILURE;
+    }else{
+
+        int battery_state = srv.response.battery_state;
+        double percentage = srv.response.percentage;
+
+        setOutput("battery_state", battery_state);
+        setOutput("percentage", percentage);
+    }
+
+}

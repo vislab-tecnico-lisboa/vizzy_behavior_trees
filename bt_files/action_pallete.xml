@@ -1,6 +1,12 @@
 <root>
     <TreeNodesModel>
-        <Condition ID="BiggerThan">
+        <Condition ID="CompareInt">
+            <input_port name="Condition"/>
+            <input_port name="A"/>
+            <input_port name="B"/>
+        </Condition>
+        <Condition ID="CompareDouble">
+            <input_port name="Condition"/>
             <input_port name="A"/>
             <input_port name="B"/>
         </Condition>
@@ -53,6 +59,11 @@
         <Action ID="WaitForXSeconds">
             <input_port name="result" default="SUCCESS">Result after specified time: SUCCESS or FAILURE</input_port>
             <input_port name="seconds" default="5">Time in seconds</input_port>
+        </Action>
+        <Action ID="CheckBattery">
+            <input_port type="std::string" name="service_name"/>
+            <output_port type="int" name="battery_state"/>
+            <output_port type="double" name="percentage"/>
         </Action>
     </TreeNodesModel>
 </root>

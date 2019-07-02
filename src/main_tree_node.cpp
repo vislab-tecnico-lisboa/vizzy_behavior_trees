@@ -12,6 +12,7 @@
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
+#include <vizzy_behavior_trees/conditions/general.hpp>
 
 //Fancy logging for Groot
 #include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
@@ -41,6 +42,8 @@ int main(int argc, char **argv)
   factory.registerNodeType<ChargeActionBT>("Charge");
   factory.registerNodeType<CartesianActionBT>("ArmCartesian");
   factory.registerNodeType<ArmRoutineBT>("ArmRoutine");
+  factory.registerNodeType<CompareInt>("CompareInt");
+  factory.registerNodeType<CompareDouble>("CompareDouble");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

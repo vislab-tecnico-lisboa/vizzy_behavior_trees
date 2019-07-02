@@ -2,17 +2,37 @@
 #define GENERAL_CONDITIONS_HPP_
 #include <behaviortree_cpp/behavior_tree.h>
 
-class BiggerThan : public BT::ConditionNode
+class CompareInt : public BT::ConditionNode
 {
     public:
-        BiggerThan(const std::string& name, const BT::NodeConfiguration& config)
+        CompareInt(const std::string& name, const BT::NodeConfiguration& config)
         : ConditionNode(name, config)
         {}
 
         static BT::PortsList providedPorts()
         {
-            return{BT::InputPort<std::string>("A"),
-                   BT::InputPort<std::string>("B")};
+            return{BT::InputPort<std::string>("Condition"),
+                   BT::InputPort<int>("A"),
+                   BT::InputPort<int>("B")};
+        }
+
+
+        BT::NodeStatus tick() override;
+
+};
+
+class CompareDouble : public BT::ConditionNode
+{
+    public:
+        CompareDouble(const std::string& name, const BT::NodeConfiguration& config)
+        : ConditionNode(name, config)
+        {}
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("Condition"),
+                   BT::InputPort<double>("A"),
+                   BT::InputPort<double>("B")};
         }
 
 
