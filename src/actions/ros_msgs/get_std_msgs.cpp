@@ -13,10 +13,10 @@ GetInt16BT::GetInt16BT(const std::string& name, const NodeConfiguration& config)
     : SyncActionNode(name, config)
     {
         ros::NodeHandle nh_;
-        BT::Optional<std::string> topic = TreeNode::getInput<std::string>("face_topic");
+        BT::Optional<std::string> topic = TreeNode::getInput<std::string>("topic");
 
         if(!topic){
-            throw BT::RuntimeError("missing required inputs [face_topic]: ",
+            throw BT::RuntimeError("missing required inputs [topic]: ",
                                     topic.error()); 
         }
 
