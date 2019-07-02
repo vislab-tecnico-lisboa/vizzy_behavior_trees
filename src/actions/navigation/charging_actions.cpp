@@ -10,10 +10,10 @@ BT::NodeStatus ChargeActionBT::tick()
 
     BT::Optional<std::string> action_name = getInput<std::string>("action_name");
 
-    
+
     if (!action_name)
     {
-        throw BT::RuntimeError("missing required inputs [action_name]: ", 
+        throw BT::RuntimeError("missing required inputs [action_name]: ",
                                 action_name.error() );
     }
 
@@ -25,7 +25,7 @@ BT::NodeStatus ChargeActionBT::tick()
     If it isn't register it. This allows us to have multiple actions for
     the same kind of actionlib (i.e. ChargeAction) and avoid creating
     duplicate action clients.*/
-    
+
 
     auto action_client_pair = _chargeClients.find(action_name.value());
     auto init_pair = _chargeClientsInitializing.find(action_name.value());
@@ -46,7 +46,7 @@ BT::NodeStatus ChargeActionBT::tick()
 
         client_PTR = std::make_shared<ChargeClient>(action_name.value());
 
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
 
         _chargeClientsInitializing[action_name.value()] = true;
 
@@ -60,7 +60,7 @@ BT::NodeStatus ChargeActionBT::tick()
 
         _chargeClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value()); 
+        ROS_INFO_STREAM("Found action server of: " << action_name.value());
         _chargeClients[action_name.value()] = client_PTR;
         ROS_INFO_STREAM("Number of move_base clients: " << _chargeClients.size());
 
@@ -78,7 +78,7 @@ BT::NodeStatus ChargeActionBT::tick()
     client_PTR->sendGoal(goal);
 
     auto charge_state = client_PTR->getState();
-    
+
     setStatus(BT::NodeStatus::RUNNING);
 
     while(!charge_state.isDone())

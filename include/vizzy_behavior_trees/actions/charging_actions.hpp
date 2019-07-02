@@ -3,6 +3,7 @@
 
 #include <vizzy_msgs/ChargeAction.h>
 #include <vizzy_msgs/ChargeGoal.h>
+#include <vizzy_msgs/BatteryState.h>
 #include <actionlib/client/simple_action_client.h>
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
@@ -40,4 +41,40 @@ class ChargeActionBT : public BT::AsyncActionNode
 };
 
 
+class CheckBatteryBT : public BT::SyncActionNode
+{
+    public:
+
+
+        CheckBatteryBT(const std::string& name, const BT::NodeConfiguration& config)
+            : SyncActionNode(name, config)
+        {
+
+            BT::Optional<std::string> service_name = getInput<std::string>("service_name");
+
+
+            if (!service_name)
+            {
+                throw BT::RuntimeError("missing required inputs [service_name]: ",
+                                        action_name.error() );
+            }
+
+            client = nh.serviceClient<vizzy_msgs::BatteryState>(service_name.value());
+
+
+
+        }
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("service_name"),
+                   BT::OutputPort<vizzy_msgs::BatteryState};
+        }
+
+        ros::Nodehandle nh;
+        ros::ServiceClient client;
+
+        BT::NodeStatus tick() override;
+
+};
 #endif
