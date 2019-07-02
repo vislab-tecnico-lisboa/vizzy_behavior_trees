@@ -7,7 +7,13 @@
                 <Action topic="game_state" number="state" ID="GetInt16"/>
                 <Fallback>
                     <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="0">
-                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Parado" ID="Speak"/>
+                        <ForceSuccess>
+                            <Sequence>
+                                <Action topic="faces" name="GetFaceList" ID="GetPoseArray" pose_array="face_array"/>
+                                <Action position_in_list="0" pose_stamped="face" ID="SelectPoseStamped" pose_array="{face_array}"/>
+                                <Action action_name="gaze" frame_id="base_link" fixation_pose="{face}" ID="GazeAtTarget"/>
+                            </Sequence>
+                        </ForceSuccess>
                     </BlackboardCheckInt>
                     <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="1">
                         <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A correr" ID="Speak"/>
@@ -94,7 +100,7 @@
             <input_port name="topic"/>
         </Action>
         <Action ID="GetPoseArray">
-            <input_port name="pose_array"/>
+            <output_port name="pose_array"/>
             <input_port name="topic"/>
         </Action>
         <Action ID="MoveBase">
@@ -109,7 +115,7 @@
         </Action>
         <Action ID="SelectPoseStamped">
             <input_port name="pose_array"/>
-            <input_port name="pose_stamped"/>
+            <output_port name="pose_stamped"/>
             <input_port name="position_in_list"/>
         </Action>
         <Action ID="Speak">
