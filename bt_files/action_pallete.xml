@@ -45,6 +45,7 @@
             <output_port name="faceListOut"/>
             <input_port name="face_topic"/>
         </Action>
+        <SubTree ID="ErrorGameState"/>
         <Action ID="FaceCounter">
             <input_port name="faceListIn"/>
             <input_port name="number_faces"/>
@@ -59,7 +60,7 @@
             <input_port name="topic"/>
         </Action>
         <Action ID="GetPoseArray">
-            <input_port name="pose_array"/>
+            <output_port name="pose_array"/>
             <input_port name="topic"/>
         </Action>
         <Action ID="MoveBase">
@@ -74,7 +75,7 @@
         </Action>
         <Action ID="SelectPoseStamped">
             <input_port name="pose_array"/>
-            <input_port name="pose_stamped"/>
+            <output_port name="pose_stamped"/>
             <input_port name="position_in_list"/>
         </Action>
         <Action ID="Speak">

@@ -3,6 +3,7 @@
     <BehaviorTree ID="BehaviorTree">
         <ReactiveFallback>
             <ReactiveSequence>
+                <Action seconds="0.5" result="SUCCESS" ID="WaitForXSeconds"/>
                 <Action topic="game_state" number="state" ID="GetInt16"/>
                 <Fallback>
                     <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="0">
