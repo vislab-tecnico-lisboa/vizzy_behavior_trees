@@ -6,6 +6,9 @@
 #include <vizzy_msgs/BatteryState.h>
 #include <vizzy_msgs/BatteryStateRequest.h>
 #include <vizzy_msgs/BatteryStateResponse.h>
+#include <vizzy_msgs/BatteryChargingState.h>
+#include <vizzy_msgs/BatteryChargingStateRequest.h>
+#include <vizzy_msgs/BatteryChargingStateResponse.h>
 #include <actionlib/client/simple_action_client.h>
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
@@ -29,7 +32,8 @@ class ChargeActionBT : public BT::AsyncActionNode
 
         static BT::PortsList providedPorts()
         {
-            return{BT::InputPort<std::string>("action_name")};
+            return{BT::InputPort<std::string>("action_name"),
+                   BT::InputPort<std::string>("action")};
         }
 
         BT::NodeStatus tick() override;
@@ -70,6 +74,43 @@ class CheckBatteryBT : public BT::SyncActionNode
             return{BT::InputPort<std::string>("service_name"),
                    BT::OutputPort<int>("battery_state"),
                    BT::OutputPort<double>("battery_percentage")};
+        }
+
+        ros::NodeHandle nh;
+        ros::ServiceClient client;
+
+        BT::NodeStatus tick() override;
+
+};
+
+
+
+class CheckChargingBT : public BT::SyncActionNode
+{
+    public:
+
+
+        CheckChargingBT(const std::string& name, const BT::NodeConfiguration& config)
+            : SyncActionNode(name, config)
+        {
+
+            BT::Optional<std::string> service_name = getInput<std::string>("service_name");
+
+
+            if (!service_name)
+            {
+                throw BT::RuntimeError("missing required inputs [service_name]: ",
+                                        service_name.error() );
+            }
+
+            client = nh.serviceClient<vizzy_msgs::BatteryChargingState>(service_name.value());
+
+        }
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("service_name"),
+                   BT::OutputPort<int>("charging_state")};
         }
 
         ros::NodeHandle nh;

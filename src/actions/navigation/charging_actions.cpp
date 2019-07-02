@@ -9,6 +9,7 @@ BT::NodeStatus ChargeActionBT::tick()
     vizzy_msgs::ChargeGoal goal;
 
     BT::Optional<std::string> action_name = getInput<std::string>("action_name");
+    BT::Optional<std::string> action = getInput<std::string>("action");
 
 
     if (!action_name)
@@ -16,9 +17,23 @@ BT::NodeStatus ChargeActionBT::tick()
         throw BT::RuntimeError("missing required inputs [action_name]: ",
                                 action_name.error() );
     }
+    if (!action)
+    {
+        throw BT::RuntimeError("missing required inputs [action]: ",
+                                action.error() );
+    }
+
+    if(action.value() == "CHARGE")
+    {
+        goal.goal = goal.CHARGE;
+    }else if(action.value() == "STOP_CHARGE")
+    {
+        goal.goal = goal.STOP_CHARGE;
+    }else{
+        return BT::NodeStatus::FAILURE;
+    }
 
 
-    goal.goal = goal.CHARGE;
 
 
     /*Check if the action client is registered in the chargeClient map
@@ -125,4 +140,21 @@ BT::NodeStatus CheckBatteryBT::tick()
         setOutput("percentage", percentage);
     }
 
+}
+
+//CheckCharging
+
+BT::NodeStatus CheckChargingBT::tick()
+{
+    vizzy_msgs::BatteryChargingState srv;
+
+    if(!client.call(srv))
+    {
+        return BT::NodeStatus::FAILURE;
+    }else{
+
+        int battery_state = srv.response.battery_charging_state;
+
+        setOutput("charging_state", battery_state);
+    }
 }

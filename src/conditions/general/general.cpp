@@ -16,7 +16,8 @@ BT::NodeStatus CompareInt::tick()
              comp.value() != "<=" &&
              comp.value() != "==" &&
              comp.value() != ">=" &&
-             comp.value() != ">")
+             comp.value() != ">" &&
+             comp.value() != "!=")
              {
                  throw BT::RuntimeError("invalid comparison. Possible comparison operators: <, <=, ==, >=, >");
              }
@@ -69,6 +70,16 @@ BT::NodeStatus CompareInt::tick()
         }else{
             return BT::NodeStatus::FAILURE;
         }
+    }
+    else if(comp.value() == "!=")
+    {
+        if (a!=b)
+        {
+            return BT::NodeStatus::SUCCESS;
+        }else{
+            return BT::NodeStatus::FAILURE;
+        }
+
     }else{
         return BT::NodeStatus::FAILURE;
     }
@@ -79,8 +90,8 @@ BT::NodeStatus CompareInt::tick()
 BT::NodeStatus CompareDouble::tick()
 {
     auto comp = getInput<std::string>("Condition");
-    auto a = getInput<int>("A");
-    auto b = getInput<int>("B");
+    auto a = getInput<double>("A");
+    auto b = getInput<double>("B");
 
 
     if(!comp)
@@ -91,7 +102,8 @@ BT::NodeStatus CompareDouble::tick()
              comp.value() != "<=" &&
              comp.value() != "==" &&
              comp.value() != ">=" &&
-             comp.value() != ">")
+             comp.value() != ">" &&
+             comp.value() != "!=")
              {
                  throw BT::RuntimeError("invalid comparison. Possible comparison operators: <, <=, ==, >=, >");
              }
@@ -144,8 +156,38 @@ BT::NodeStatus CompareDouble::tick()
         }else{
             return BT::NodeStatus::FAILURE;
         }
+    }
+    else if(comp.value() == "!=")
+    {
+        if (a!=b)
+        {
+            return BT::NodeStatus::SUCCESS;
+        }else{
+            return BT::NodeStatus::FAILURE;
+        }
+
     }else{
         return BT::NodeStatus::FAILURE;
     }
 
+}
+
+BT::NodeStatus CheckBool::tick()
+{
+    auto var = getInput<bool>("variable");
+
+    if(!var)
+    {
+        throw BT::RuntimeError("missing required inputs [variable]: ",
+                                var.error()); 
+    }
+
+    if(var.value())
+    {
+        return BT::NodeStatus::SUCCESS;
+    }else
+    {
+        return BT::NodeStatus::FAILURE;
+    }
+    
 }

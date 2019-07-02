@@ -44,6 +44,9 @@ int main(int argc, char **argv)
   factory.registerNodeType<ArmRoutineBT>("ArmRoutine");
   factory.registerNodeType<CompareInt>("CompareInt");
   factory.registerNodeType<CompareDouble>("CompareDouble");
+  factory.registerNodeType<CheckBool>("CheckBool");
+  factory.registerNodeType<CheckChargingBT>("CheckCharging");
+  factory.registerNodeType<CheckBatteryBT>("CheckBattery");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

@@ -57,6 +57,7 @@ add_library(vizzy_actions STATIC
   src/actions/gaze/gaze_actions.cpp
   src/actions/arms/arms_cartesian_actions.cpp
   src/actions/arms/arm_routines.cpp
+  src/actions/ros_msgs/get_std_msgs.cpp
   src/conditions/general/general.cpp
 )
 add_dependencies(vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp)

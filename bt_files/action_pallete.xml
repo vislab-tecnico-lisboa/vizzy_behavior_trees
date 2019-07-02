@@ -1,21 +1,45 @@
 <root>
     <TreeNodesModel>
-        <Condition ID="CompareInt">
-            <input_port name="Condition"/>
-            <input_port name="A"/>
-            <input_port name="B"/>
-        </Condition>
-        <Condition ID="CompareDouble">
-            <input_port name="Condition"/>
-            <input_port name="A"/>
-            <input_port name="B"/>
-        </Condition>
+        <Action ID="ArmCartesian">
+            <input_port name="action_name"/>
+            <input_port name="frame_id"/>
+            <input_port name="pose"/>
+            <input_port name="type"/>
+        </Action>
+        <Action ID="ArmRoutines">
+            <input_port name="gesture"/>
+            <input_port name="topic"/>
+        </Action>
         <Action ID="Charge">
+            <input_port name="action"/>
             <input_port name="action_name"/>
         </Action>
+        <SubTree ID="ChargeST"/>
+        <Action ID="CheckBattery">
+            <output_port name="battery_state" type="int"/>
+            <output_port name="percentage" type="double"/>
+            <input_port name="service_name" type="std::string"/>
+        </Action>
+        <Condition ID="CheckBool">
+            <input_port name="variable"/>
+        </Condition>
+        <Action ID="CheckCharging">
+            <output_port name="charging_state" type="int"/>
+            <input_port name="service_name" type="std::string"/>
+        </Action>
+        <Condition ID="CompareDouble">
+            <input_port name="A"/>
+            <input_port name="B"/>
+            <input_port name="Condition"/>
+        </Condition>
+        <Condition ID="CompareInt">
+            <input_port name="A"/>
+            <input_port name="B"/>
+            <input_port name="Condition"/>
+        </Condition>
         <Action ID="DetectBlocks">
-            <output_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <input_port type="std::string" name="block_topic"/>
+            <output_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
+            <input_port name="block_topic" type="std::string"/>
         </Action>
         <Action ID="DetectFaces">
             <output_port name="faceListOut"/>
@@ -35,35 +59,20 @@
             <input_port name="frame_id"/>
             <input_port name="goal_pose"/>
         </Action>
-        <Action ID="ArmCartesian">
-            <input_port name="action_name"/>
-            <input_port name="type"/>
-            <input_port name="pose"/>
-            <input_port name="frame_id"/>
-        </Action>
-        <Action ID="ArmRoutines">
-            <input_port name="topic"/>
-            <input_port name="gesture"/>
-        </Action>
         <Action ID="SelectBlock">
-            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
-            <input_port type="std::string" name="position_in_list"/>
+            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
+            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
+            <input_port name="position_in_list" type="std::string"/>
         </Action>
         <Action ID="Speak">
-            <input_port type="std::string" name="action_name"/>
-            <input_port type="std::string" name="language"/>
-            <input_port type="std::string" name="utterance"/>
-            <input_port type="std::string" name="voice"/>
+            <input_port name="action_name" type="std::string"/>
+            <input_port name="language" type="std::string"/>
+            <input_port name="utterance" type="std::string"/>
+            <input_port name="voice" type="std::string"/>
         </Action>
         <Action ID="WaitForXSeconds">
             <input_port name="result" default="SUCCESS">Result after specified time: SUCCESS or FAILURE</input_port>
             <input_port name="seconds" default="5">Time in seconds</input_port>
-        </Action>
-        <Action ID="CheckBattery">
-            <input_port type="std::string" name="service_name"/>
-            <output_port type="int" name="battery_state"/>
-            <output_port type="double" name="percentage"/>
         </Action>
     </TreeNodesModel>
 </root>
