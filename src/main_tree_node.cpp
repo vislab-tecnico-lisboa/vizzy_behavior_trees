@@ -10,6 +10,7 @@
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
 #include <vizzy_behavior_trees/actions/general.hpp>
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
+#include <vizzy_behavior_trees/actions/gaze_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
 #include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
@@ -52,6 +53,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<GetInt16BT>("GetInt16");
   factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
   factory.registerNodeType<SelectPoseStamped>("SelectPoseStamped");
+  factory.registerNodeType<GazeActionBT>("GazeAtTarget");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
@@ -59,7 +61,7 @@ int main(int argc, char **argv)
   BT::PublisherZMQ publisher_zmq(tree);
 
 
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(10);
 
   while (ros::ok())
   {

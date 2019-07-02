@@ -54,13 +54,13 @@ BT::NodeStatus GetPoseArrayBT::tick()
 NodeStatus SelectPoseStamped::tick()
 {
 
-    BT::Optional<geometry_msgs::PoseArray> poses = getInput<geometry_msgs::PoseArray>("pose_list");
+    BT::Optional<geometry_msgs::PoseArray> poses = getInput<geometry_msgs::PoseArray>("pose_array");
     BT::Optional<std::string> pos_in_list = getInput<std::string>("position_in_list");
 
     if(!poses)
     {
 
-        throw BT::RuntimeError("missing required inputs [pose_list]: ",
+        throw BT::RuntimeError("missing required inputs [pose_array]: ",
                                 poses.error()); 
 
     }if(!pos_in_list)
@@ -81,6 +81,7 @@ NodeStatus SelectPoseStamped::tick()
 
     if(list.poses.size() <= position)
     {
+        ROS_ERROR_STREAM("No face!");
         return BT::NodeStatus::FAILURE;
     }
 
@@ -89,7 +90,7 @@ NodeStatus SelectPoseStamped::tick()
     pose.header.stamp = list.header.stamp;
     pose.pose = list.poses[position];
 
-    auto result = setOutput("pose_pose", pose);
+    auto result = setOutput("pose_stamped", pose);
 
     if(!result)
     {

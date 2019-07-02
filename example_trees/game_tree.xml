@@ -3,29 +3,27 @@
     <BehaviorTree ID="BehaviorTree">
         <ReactiveFallback>
             <ReactiveSequence>
-                <Action seconds="0.5" result="SUCCESS" ID="WaitForXSeconds"/>
-                <Action topic="game_state" number="state" ID="GetInt16"/>
+                <Action topic="game_state" ID="GetInt16" number="state"/>
                 <Fallback>
-                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="0">
+                    <BlackboardCheckInt value_A="{state}" value_B="0" return_on_mismatch="FAILURE">
                         <ForceSuccess>
                             <Sequence>
-                                <Action topic="faces" name="GetFaceList" ID="GetPoseArray" pose_array="face_array"/>
-                                <Action position_in_list="0" pose_stamped="face" ID="SelectPoseStamped" pose_array="{face_array}"/>
-                                <Action action_name="gaze" frame_id="base_link" fixation_pose="{face}" ID="GazeAtTarget"/>
+                                <Action pose_array="face_array" topic="faces" ID="GetPoseArray" name="GetFaceList"/>
+                                <Action pose_array="{face_array}" ID="SelectPoseStamped" pose_stamped="face" position_in_list="0"/>
+                                <Action frame_id="base_footprint" action_name="gaze" ID="GazeAtTarget" fixation_pose="{face}"/>
                             </Sequence>
                         </ForceSuccess>
                     </BlackboardCheckInt>
-                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="1">
-                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A correr" ID="Speak"/>
+                    <BlackboardCheckInt value_A="{state}" value_B="1" return_on_mismatch="FAILURE">
+                        <Action utterance="A correr" action_name="nuance_speech_tts" ID="Speak" language="pt_PT" voice="Joaquim"/>
                     </BlackboardCheckInt>
-                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="2">
-                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A preparar" ID="Speak"/>
+                    <BlackboardCheckInt value_A="{state}" value_B="2" return_on_mismatch="FAILURE">
+                        <Action utterance="A preparar" action_name="nuance_speech_tts" ID="Speak" language="pt_PT" voice="Joaquim"/>
                     </BlackboardCheckInt>
-                    <BlackboardCheckInt return_on_mismatch="FAILURE" value_A="{state}" value_B="3">
-                        <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="A validar" ID="Speak"/>
+                    <BlackboardCheckInt value_A="{state}" value_B="3" return_on_mismatch="FAILURE">
+                        <Action utterance="A validar" action_name="nuance_speech_tts" ID="Speak" language="pt_PT" voice="Joaquim"/>
                     </BlackboardCheckInt>
                 </Fallback>
-                <Action seconds="60" result="SUCCESS" ID="WaitForXSeconds"/>
             </ReactiveSequence>
             <SubTree ID="ErrorGameState"/>
         </ReactiveFallback>
@@ -33,102 +31,13 @@
     <!-- ////////// -->
     <BehaviorTree ID="ErrorGameState">
         <SequenceStar>
-            <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Não sei o estado do jogo" ID="Speak"/>
-            <Action action_name="nuance_speech_tts" voice="Joaquim" language="pt_PT" utterance="Chamem o assistente" ID="Speak"/>
-            <Action seconds="60" result="SUCCESS" ID="WaitForXSeconds"/>
+            <Action utterance="Não sei o estado do jogo" action_name="nuance_speech_tts" ID="Speak" language="pt_PT" voice="Joaquim"/>
+            <Action utterance="Chamem o assistente" action_name="nuance_speech_tts" ID="Speak" language="pt_PT" voice="Joaquim"/>
+            <Action ID="WaitForXSeconds" seconds="60" result="SUCCESS"/>
         </SequenceStar>
     </BehaviorTree>
     <!-- ////////// -->
-    <TreeNodesModel>
-        <Action ID="ArmCartesian">
-            <input_port name="action_name"/>
-            <input_port name="frame_id"/>
-            <input_port name="pose"/>
-            <input_port name="type"/>
-        </Action>
-        <Action ID="ArmRoutines">
-            <input_port name="gesture"/>
-            <input_port name="topic"/>
-        </Action>
-        <Action ID="Charge">
-            <input_port name="action"/>
-            <input_port name="action_name"/>
-        </Action>
-        <SubTree ID="ChargeST"/>
-        <Action ID="CheckBattery">
-            <output_port type="int" name="battery_state"/>
-            <output_port type="double" name="percentage"/>
-            <input_port type="std::string" name="service_name"/>
-        </Action>
-        <Condition ID="CheckBool">
-            <input_port name="variable"/>
-        </Condition>
-        <Action ID="CheckCharging">
-            <output_port type="int" name="charging_state"/>
-            <input_port type="std::string" name="service_name"/>
-        </Action>
-        <Condition ID="CompareDouble">
-            <input_port name="A"/>
-            <input_port name="B"/>
-            <input_port name="Condition"/>
-        </Condition>
-        <Condition ID="CompareInt">
-            <input_port name="A"/>
-            <input_port name="B"/>
-            <input_port name="Condition"/>
-        </Condition>
-        <Action ID="DetectBlocks">
-            <output_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <input_port type="std::string" name="block_topic"/>
-        </Action>
-        <Action ID="DetectFaces">
-            <output_port name="faceListOut"/>
-            <input_port name="face_topic"/>
-        </Action>
-        <SubTree ID="ErrorGameState"/>
-        <Action ID="FaceCounter">
-            <input_port name="faceListIn"/>
-            <input_port name="number_faces"/>
-        </Action>
-        <Action ID="GazeAtTarget">
-            <input_port name="action_name"/>
-            <input_port name="fixation_pose"/>
-            <input_port name="frame_id"/>
-        </Action>
-        <Action ID="GetInt16">
-            <output_port name="number"/>
-            <input_port name="topic"/>
-        </Action>
-        <Action ID="GetPoseArray">
-            <output_port name="pose_array"/>
-            <input_port name="topic"/>
-        </Action>
-        <Action ID="MoveBase">
-            <input_port name="action_name"/>
-            <input_port name="frame_id"/>
-            <input_port name="goal_pose"/>
-        </Action>
-        <Action ID="SelectBlock">
-            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
-            <input_port type="std::string" name="position_in_list"/>
-        </Action>
-        <Action ID="SelectPoseStamped">
-            <input_port name="pose_array"/>
-            <output_port name="pose_stamped"/>
-            <input_port name="position_in_list"/>
-        </Action>
-        <Action ID="Speak">
-            <input_port type="std::string" name="action_name"/>
-            <input_port type="std::string" name="language"/>
-            <input_port type="std::string" name="utterance"/>
-            <input_port type="std::string" name="voice"/>
-        </Action>
-        <Action ID="WaitForXSeconds">
-            <input_port name="result" default="SUCCESS">Result after specified time: SUCCESS or FAILURE</input_port>
-            <input_port name="seconds" default="5">Time in seconds</input_port>
-        </Action>
-    </TreeNodesModel>
+    <TreeNodesModel/>
     <!-- ////////// -->
 </root>
 
