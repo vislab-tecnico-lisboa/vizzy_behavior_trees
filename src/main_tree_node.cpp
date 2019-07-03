@@ -28,15 +28,6 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
   ros::NodeHandle nPriv("~");
 
-
-  /*Action clients*/
-  actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> *speech_client;
-  speech_client = new actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction>("nuance_speech_tts");
-  ROS_INFO("Waiting for speech client server");
-  speech_client->waitForServer();
-
-  /****************/
-
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<SpeechActionBT>("Speak");
