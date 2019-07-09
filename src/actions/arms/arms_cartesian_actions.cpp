@@ -1,4 +1,6 @@
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
+#include <math.h>
+#define MAX_REACH 0.4
 
 
 std::map<std::string, std::shared_ptr<CartesianClient>> CartesianActionBT::_cartesianClients;
@@ -101,7 +103,103 @@ BT::NodeStatus CartesianActionBT::tick()
             goal.end_effector_pose.header.frame_id = poseStamped.header.frame_id;
         }
 
-        goal.end_effector_pose.pose = poseStamped.pose;
+        //Transform it to the appropriate shoulder frame to make necessary computations
+        //Maximum arm length approx 0.40 cm. This avoids strange orientations of the end effector
+
+        geometry_msgs::TransformStamped transformStamped;
+        geometry_msgs::PoseStamped coordsInShoulder;
+
+        ROS_ERROR_STREAM("Action name:" << action_name.value());
+
+        if(action_name.value() != "/vizzy/right_arm_cartesian_controller/cartesian_action" 
+            && action_name.value() != "/vizzy/left_arm_cartesian_controller/cartesian_action"){
+
+            goal.end_effector_pose.pose = poseStamped.pose;
+
+        }else{
+
+            if(action_name.value() == "/vizzy/left_arm_cartesian_controller/cartesian_action")
+            {
+                try{
+                    transformStamped = tfBuffer.lookupTransform("l_shoulder_abduction_link", 
+                        goal.end_effector_pose.header.frame_id, ros::Time(0));
+                    tf2::doTransform(poseStamped, coordsInShoulder, transformStamped);
+                }
+                catch (tf2::TransformException &ex) {
+                    ROS_WARN("%s",ex.what());
+                    return BT::NodeStatus::FAILURE;
+                }
+
+                goal.end_effector_pose.header.frame_id = "l_shoulder_abduction_link";
+
+            }else if(action_name.value() == "/vizzy/right_arm_cartesian_controller/cartesian_action")
+            {
+                try{
+                    transformStamped = tfBuffer.lookupTransform("r_shoulder_abduction_link", 
+                        goal.end_effector_pose.header.frame_id, ros::Time(0));
+                    tf2::doTransform(poseStamped, coordsInShoulder, transformStamped);
+                }
+                catch (tf2::TransformException &ex) {
+                    ROS_WARN("%s",ex.what());
+                    return BT::NodeStatus::FAILURE;
+                }
+
+                goal.end_effector_pose.header.frame_id = "r_shoulder_abduction_link";
+
+            }
+
+
+            //Compute the norm to check out if the robot can reach the goal
+            double x, y, z;
+            x = coordsInShoulder.pose.position.x;
+            y = coordsInShoulder.pose.position.y;
+            z = coordsInShoulder.pose.position.z;
+
+            double norma = sqrt(x*x+y*y+z*z);
+
+            x = x/norma;
+            y = y/norma;
+            z = z/norma;
+
+            //If the robot cannot reach it...
+            if(norma > MAX_REACH)
+            {
+                coordsInShoulder.pose.position.x = x*MAX_REACH;
+                coordsInShoulder.pose.position.y = y*MAX_REACH;
+                coordsInShoulder.pose.position.z = z*MAX_REACH;
+            }
+
+            //Compute the orientation.
+            //Using axis-angle is easier: compute cross product between x and the point.
+            //Compute the angle
+            tf2::Quaternion orientation;
+            tf2::Vector3 pt(x, y, z);
+            tf2::Vector3 uni_x(1, 0, 0);
+
+            tf2::Vector3 axis = pt.cross(uni_x);
+            axis.normalize();
+            
+            double angle = pt.angle(uni_x);
+
+            orientation.setRotation(axis, -angle);
+
+            //Choose desired angle around x axis and rotate;
+            double rx = 0.0;
+
+            tf2::Quaternion rot_x;
+            rot_x.setRPY(rx, 0, 0);
+
+            orientation = rot_x*orientation;
+            orientation.normalize();
+            goal.end_effector_pose.pose.position = coordsInShoulder.pose.position;
+
+            tf2::convert(orientation, goal.end_effector_pose.pose.orientation);
+
+            pub_fixed.publish(goal.end_effector_pose);
+            pub_origintal.publish(poseStamped);
+
+        }
+
 
     }else if(tipo.value() == "HOME"){
         goal.type = goal.HOME;
@@ -124,29 +222,8 @@ BT::NodeStatus CartesianActionBT::tick()
 
     auto move_state = client_PTR->getState();
 
-    setStatus(BT::NodeStatus::RUNNING);
 
-    while(!move_state.isDone())
-    {
-        if(_halt_requested)
-        {
-            vizzy_msgs::CartesianGoal goal;
-            goal.type = goal.PREEMPT;
-            client_PTR->sendGoal(goal);
-            return BT::NodeStatus::FAILURE;
-        }
-
-        move_state = client_PTR->getState();
-        SleepMS(100);
-    }
-
-
-    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
-        return BT::NodeStatus::SUCCESS;
-    }else{
-        return BT::NodeStatus::FAILURE;
-    }
+    return BT::NodeStatus::SUCCESS;
 
 
 }

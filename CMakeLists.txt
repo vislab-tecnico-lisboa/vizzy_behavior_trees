@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
   woz_dialog_msgs
   actionlib
   move_base_msgs
+  tf2
+  tf2_ros
 )
 
 
