@@ -61,7 +61,7 @@ int main(int argc, char **argv)
   BT::PublisherZMQ publisher_zmq(tree);
 
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(30);
 
   while (ros::ok())
   {

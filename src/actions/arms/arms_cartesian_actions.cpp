@@ -1,4 +1,5 @@
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
+#include <math.h>
 
 
 std::map<std::string, std::shared_ptr<CartesianClient>> CartesianActionBT::_cartesianClients;
@@ -93,6 +94,7 @@ BT::NodeStatus CartesianActionBT::tick()
 
         goal.type = goal.CARTESIAN;
 
+
         if(poseStamped.header.frame_id == "")
         {
             goal.end_effector_pose.header.frame_id = frame_id.value();
@@ -100,8 +102,42 @@ BT::NodeStatus CartesianActionBT::tick()
         {
             goal.end_effector_pose.header.frame_id = poseStamped.header.frame_id;
         }
+/*
+
+        //I need to convert frames to base_footprint for this to always work!
+
+        double z_offset = 0.70;
+        double y_offset = -0.212;
+
+
+        //Project the point in the 1m sphere centered in the shoulder. Change frame to shoulder and normalize coordinates 
+
+
+        double x, y, z;
+
+        x = poseStamped.pose.position.x;
+        y = poseStamped.pose.position.y-y_offset;
+        z = poseStamped.pose.position.z-z_offset;
+
+        double norma = sqrt(x*x+y*y+z*z); 
+
+        if(norma > 0.44)
+        {
+            x = (x/norma)*0.44;
+            y = (y/norma)*0.44;
+            z = (z/norma)*0.44;
+        }
+
+        //Convert back to base_footprint frame
+        
+        goal.end_effector_pose.pose.position.x = x;
+        goal.end_effector_pose.pose.position.y = y+y_offset;
+        goal.end_effector_pose.pose.position.z = z+z_offset;
+
+        goal.end_effector_pose.pose.orientation.w = 1.0; */
 
         goal.end_effector_pose.pose = poseStamped.pose;
+
 
     }else if(tipo.value() == "HOME"){
         goal.type = goal.HOME;
@@ -126,7 +162,7 @@ BT::NodeStatus CartesianActionBT::tick()
 
     setStatus(BT::NodeStatus::RUNNING);
 
-    while(!move_state.isDone())
+    /*while(!move_state.isDone())
     {
         if(_halt_requested)
         {
@@ -138,15 +174,15 @@ BT::NodeStatus CartesianActionBT::tick()
 
         move_state = client_PTR->getState();
         SleepMS(100);
-    }
+    }*/
 
 
-    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
+/*    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {*/
         return BT::NodeStatus::SUCCESS;
-    }else{
+    /*}else{
         return BT::NodeStatus::FAILURE;
-    }
+    }*/
 
 
 }

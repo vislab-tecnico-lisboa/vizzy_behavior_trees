@@ -43,7 +43,6 @@ BT::NodeStatus GetPoseArrayBT::tick()
 
     if(!result)
     {
-        std::cout << result.error() << std::endl;
         return BT::NodeStatus::FAILURE;
     }
 
@@ -81,7 +80,6 @@ NodeStatus SelectPoseStamped::tick()
 
     if(list.poses.size() <= position)
     {
-        ROS_ERROR_STREAM("No face!");
         return BT::NodeStatus::FAILURE;
     }
 
@@ -97,7 +95,7 @@ NodeStatus SelectPoseStamped::tick()
         return BT::NodeStatus::FAILURE;
     }
 
-    ROS_ERROR_STREAM(pose);
+   
 
     return BT::NodeStatus::SUCCESS;
 
