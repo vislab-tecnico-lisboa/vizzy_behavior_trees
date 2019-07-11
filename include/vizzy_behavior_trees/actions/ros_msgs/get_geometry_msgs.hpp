@@ -58,4 +58,26 @@ class SelectPoseStamped : public AsyncActionNode
         void halt() override {};
 };
 
+//Select field from PoseStamped
+class SelectFieldFromPoseStamped : public AsyncActionNode
+{
+
+    public:
+        geometry_msgs::PoseStamped pose;
+
+        SelectFieldFromPoseStamped(const std::string& string, const NodeConfiguration& config)
+        : AsyncActionNode(string, config){}
+
+
+        static PortsList providedPorts()
+        {
+            return { InputPort<std::string>("field"), 
+                OutputPort<double>("output_val"),
+                InputPort<geometry_msgs::PoseStamped>("pose_stamped")};
+        }
+
+        NodeStatus tick() override;
+        void halt() override {};
+};
+
 #endif

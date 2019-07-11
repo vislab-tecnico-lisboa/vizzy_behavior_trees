@@ -16,6 +16,7 @@
 #include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
 #include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
 #include <vizzy_behavior_trees/conditions/general.hpp>
+#include <vizzy_behavior_trees/actions/torso_actions.hpp>
 
 //Fancy logging for Groot
 #include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
@@ -35,7 +36,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
   factory.registerNodeType<ChargeActionBT>("Charge");
   factory.registerNodeType<CartesianActionBT>("ArmCartesian");
-  factory.registerNodeType<ArmRoutineBT>("ArmRoutine");
+  factory.registerNodeType<ArmRoutineBT>("ArmRoutines");
   factory.registerNodeType<CompareInt>("CompareInt");
   factory.registerNodeType<CompareDouble>("CompareDouble");
   factory.registerNodeType<CheckBool>("CheckBool");
@@ -45,6 +46,8 @@ int main(int argc, char **argv)
   factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
   factory.registerNodeType<SelectPoseStamped>("SelectPoseStamped");
   factory.registerNodeType<GazeActionBT>("GazeAtTarget");
+  factory.registerNodeType<SelectFieldFromPoseStamped>("SelectFieldFromPoseStamped");
+  factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

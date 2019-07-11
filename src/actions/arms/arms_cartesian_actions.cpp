@@ -1,6 +1,7 @@
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
+#include "tf/transform_datatypes.h"
 #include <math.h>
-#define MAX_REACH 0.4
+#define MAX_REACH 0.6
 
 
 std::map<std::string, std::shared_ptr<CartesianClient>> CartesianActionBT::_cartesianClients;
@@ -95,6 +96,8 @@ BT::NodeStatus CartesianActionBT::tick()
 
         goal.type = goal.CARTESIAN;
 
+        bool left;
+
 
         if(poseStamped.header.frame_id == "")
         {
@@ -103,39 +106,6 @@ BT::NodeStatus CartesianActionBT::tick()
         {
             goal.end_effector_pose.header.frame_id = poseStamped.header.frame_id;
         }
-/*
-
-        //I need to convert frames to base_footprint for this to always work!
-
-        double z_offset = 0.70;
-        double y_offset = -0.212;
-
-
-        //Project the point in the 1m sphere centered in the shoulder. Change frame to shoulder and normalize coordinates 
-
-
-        double x, y, z;
-
-        x = poseStamped.pose.position.x;
-        y = poseStamped.pose.position.y-y_offset;
-        z = poseStamped.pose.position.z-z_offset;
-
-        double norma = sqrt(x*x+y*y+z*z); 
-
-        if(norma > 0.44)
-        {
-            x = (x/norma)*0.44;
-            y = (y/norma)*0.44;
-            z = (z/norma)*0.44;
-        }
-
-        //Convert back to base_footprint frame
-        
-        goal.end_effector_pose.pose.position.x = x;
-        goal.end_effector_pose.pose.position.y = y+y_offset;
-        goal.end_effector_pose.pose.position.z = z+z_offset;
-
-        goal.end_effector_pose.pose.orientation.w = 1.0; */
 
         //Transform it to the appropriate shoulder frame to make necessary computations
         //Maximum arm length approx 0.40 cm. This avoids strange orientations of the end effector
@@ -155,6 +125,7 @@ BT::NodeStatus CartesianActionBT::tick()
             if(action_name.value() == "/vizzy/left_arm_cartesian_controller/cartesian_action")
             {
                 try{
+                    left = true;
                     transformStamped = tfBuffer.lookupTransform("l_shoulder_abduction_link", 
                         goal.end_effector_pose.header.frame_id, ros::Time(0));
                     tf2::doTransform(poseStamped, coordsInShoulder, transformStamped);
@@ -169,6 +140,7 @@ BT::NodeStatus CartesianActionBT::tick()
             }else if(action_name.value() == "/vizzy/right_arm_cartesian_controller/cartesian_action")
             {
                 try{
+                    left = false;
                     transformStamped = tfBuffer.lookupTransform("r_shoulder_abduction_link", 
                         goal.end_effector_pose.header.frame_id, ros::Time(0));
                     tf2::doTransform(poseStamped, coordsInShoulder, transformStamped);
@@ -217,8 +189,46 @@ BT::NodeStatus CartesianActionBT::tick()
 
             orientation.setRotation(axis, -angle);
 
-            //Choose desired angle around x axis and rotate;
-            double rx = 0.0;
+            //Now that x axis is aligned with the goal, rotate around it o make sure that the palm is pointing towards
+            //the center of the robot (hand z axis is aligned with base footprint y). If it isn't, rotate around x to
+            //do so.
+
+
+            tf2::convert(orientation, goal.end_effector_pose.pose.orientation);
+
+
+            //Temporary. Check that poseStamped is on base_footprint and just doTransform with the inverse
+            
+            if(poseStamped.header.frame_id == "base_footprint")
+            {
+
+                geometry_msgs::PoseStamped goal_pose_on_basefootprint;
+                geometry_msgs::TransformStamped invTransformStamped;
+
+                tf2::Stamped<tf2::Transform> tf2TransformStamped;
+                tf2::fromMsg(transformStamped, tf2TransformStamped);
+
+                auto tf2InverseTransform = tf2TransformStamped.inverse();
+
+                tf2::Stamped<tf2::Transform> tfInvT;
+                tfInvT.setData(tf2InverseTransform);
+
+                invTransformStamped = tf2::toMsg(tfInvT);
+                
+                tf2::doTransform(goal.end_effector_pose, goal_pose_on_basefootprint, invTransformStamped);
+                
+                tf2::Transform tf_goal_to_base;
+
+            }
+
+
+            
+            double rx;
+
+            if(left)
+                rx = 0;
+            else
+                rx = 0;
 
             tf2::Quaternion rot_x;
             rot_x.setRPY(rx, 0, 0);
@@ -258,6 +268,7 @@ BT::NodeStatus CartesianActionBT::tick()
     auto move_state = client_PTR->getState();
 
     setStatus(BT::NodeStatus::RUNNING);
+
 
     /*while(!move_state.isDone())
     {
