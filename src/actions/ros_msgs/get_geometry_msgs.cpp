@@ -43,7 +43,6 @@ BT::NodeStatus GetPoseArrayBT::tick()
 
     if(!result)
     {
-        std::cout << result.error() << std::endl;
         return BT::NodeStatus::FAILURE;
     }
 
@@ -54,13 +53,13 @@ BT::NodeStatus GetPoseArrayBT::tick()
 NodeStatus SelectPoseStamped::tick()
 {
 
-    BT::Optional<geometry_msgs::PoseArray> poses = getInput<geometry_msgs::PoseArray>("pose_list");
+    BT::Optional<geometry_msgs::PoseArray> poses = getInput<geometry_msgs::PoseArray>("pose_array");
     BT::Optional<std::string> pos_in_list = getInput<std::string>("position_in_list");
 
     if(!poses)
     {
 
-        throw BT::RuntimeError("missing required inputs [pose_list]: ",
+        throw BT::RuntimeError("missing required inputs [pose_array]: ",
                                 poses.error()); 
 
     }if(!pos_in_list)
@@ -89,14 +88,64 @@ NodeStatus SelectPoseStamped::tick()
     pose.header.stamp = list.header.stamp;
     pose.pose = list.poses[position];
 
-    auto result = setOutput("pose_pose", pose);
+    auto result = setOutput("pose_stamped", pose);
 
     if(!result)
     {
         return BT::NodeStatus::FAILURE;
     }
 
-    ROS_ERROR_STREAM(pose);
+   
+
+    return BT::NodeStatus::SUCCESS;
+
+}
+
+//PoseStamped
+NodeStatus SelectFieldFromPoseStamped::tick()
+{
+
+    BT::Optional<std::string> field = getInput<std::string>("field");
+    BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("pose_stamped");
+
+    if(!field)
+    {
+
+        throw BT::RuntimeError("missing required inputs [field]: ",
+                                field.error()); 
+
+    }if(!pose)
+    {
+
+        throw BT::RuntimeError("missing required inputs [pose]: ",
+                                pose.error()); 
+    }
+
+    geometry_msgs::PoseStamped pose_val = pose.value();
+
+    setStatus(BT::NodeStatus::RUNNING);
+    
+    double value;
+
+    if(field.value() == "x")
+    {
+        value = pose_val.pose.position.x;
+    }else if(field.value() == "y")
+    {
+        value = pose_val.pose.position.y;
+    }else if(field.value() == "z")
+    {
+        value = pose_val.pose.position.z;
+    }else
+        return BT::NodeStatus::FAILURE;
+
+
+    auto result = setOutput("output_val", value);
+
+    if(!result)
+    {
+        return BT::NodeStatus::FAILURE;
+    }
 
     return BT::NodeStatus::SUCCESS;
 

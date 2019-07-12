@@ -1,14 +1,14 @@
-<root>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Action pose_array="poses" topic="poses" ID="GetPoseArray"/>
+            <Action pose_array="{poses}" pose_stamped="pose" position_in_list="0" ID="SelectPoseStamped"/>
+            <Action type="CARTESIAN" action_name="/vizzy/right_arm_cartesian_controller/cartesian_action" frame_id="base_footprint" pose="{pose}" ID="ArmCartesian"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
     <TreeNodesModel>
-        <Action ID="SelectFieldFromPoseStamped">
-            <input_port name="field"/>
-            <input_port name="pose_stamped"/>
-            <output_port name="output_val"/>
-        </Action>
-        <Action ID="MoveTorso">
-            <input_port name="topic"/>
-            <input_port name="angle"/>
-        </Action>
         <Action ID="ArmCartesian">
             <input_port name="action_name"/>
             <input_port name="frame_id"/>
@@ -98,5 +98,6 @@
             <input_port name="seconds" default="5">Time in seconds</input_port>
         </Action>
     </TreeNodesModel>
+    <!-- ////////// -->
 </root>
 

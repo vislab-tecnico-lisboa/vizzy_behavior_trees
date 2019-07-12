@@ -8,6 +8,8 @@
 #include <vizzy_msgs/CartesianGoal.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <vizzy_behavior_trees/conversions.hpp>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::CartesianAction> CartesianClient;
@@ -22,10 +24,20 @@ class CartesianActionBT : public BT::AsyncActionNode
         and avoid creating duplicate action clients (i.e. using the same action in multiple
         parts of the behavior_tree).*/
 
+        tf2_ros::Buffer tfBuffer;
+        tf2_ros::TransformListener tfListener;
+
+        //DEBUG
+        ros::Publisher pub_origintal;
+        ros::Publisher pub_fixed;
+
 
         CartesianActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config)
+            : AsyncActionNode(name, config), tfListener(tfBuffer)
         {
+            ros::NodeHandle nh;
+            pub_origintal = nh.advertise<geometry_msgs::PoseStamped>("original", 1);
+            pub_fixed = nh.advertise<geometry_msgs::PoseStamped>("fixed", 1);
         }
 
         static BT::PortsList providedPorts()

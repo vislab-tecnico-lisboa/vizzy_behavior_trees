@@ -10,11 +10,13 @@
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
 #include <vizzy_behavior_trees/actions/general.hpp>
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
+#include <vizzy_behavior_trees/actions/gaze_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
 #include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
 #include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
 #include <vizzy_behavior_trees/conditions/general.hpp>
+#include <vizzy_behavior_trees/actions/torso_actions.hpp>
 
 //Fancy logging for Groot
 #include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
@@ -27,15 +29,6 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
   ros::NodeHandle nPriv("~");
 
-
-  /*Action clients*/
-  actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> *speech_client;
-  speech_client = new actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction>("nuance_speech_tts");
-  ROS_INFO("Waiting for speech client server");
-  speech_client->waitForServer();
-
-  /****************/
-
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<SpeechActionBT>("Speak");
@@ -43,7 +36,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
   factory.registerNodeType<ChargeActionBT>("Charge");
   factory.registerNodeType<CartesianActionBT>("ArmCartesian");
-  factory.registerNodeType<ArmRoutineBT>("ArmRoutine");
+  factory.registerNodeType<ArmRoutineBT>("ArmRoutines");
   factory.registerNodeType<CompareInt>("CompareInt");
   factory.registerNodeType<CompareDouble>("CompareDouble");
   factory.registerNodeType<CheckBool>("CheckBool");
@@ -52,6 +45,9 @@ int main(int argc, char **argv)
   factory.registerNodeType<GetInt16BT>("GetInt16");
   factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
   factory.registerNodeType<SelectPoseStamped>("SelectPoseStamped");
+  factory.registerNodeType<GazeActionBT>("GazeAtTarget");
+  factory.registerNodeType<SelectFieldFromPoseStamped>("SelectFieldFromPoseStamped");
+  factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
@@ -59,7 +55,7 @@ int main(int argc, char **argv)
   BT::PublisherZMQ publisher_zmq(tree);
 
 
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(30);
 
   while (ros::ok())
   {
