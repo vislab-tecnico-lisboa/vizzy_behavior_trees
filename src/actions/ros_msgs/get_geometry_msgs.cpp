@@ -29,7 +29,7 @@ GetPoseArrayBT::GetPoseArrayBT(const std::string& name, const NodeConfiguration&
 
 BT::NodeStatus GetPoseArrayBT::tick()
 {
-    
+
     if(sub_.getNumPublishers() < 1)
     {
         return BT::NodeStatus::FAILURE;
@@ -71,7 +71,7 @@ NodeStatus SelectPoseStamped::tick()
     }
 
     setStatus(BT::NodeStatus::RUNNING);
-    
+
     int position = std::atoi(pos_in_list.value().c_str());
 
 
