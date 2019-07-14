@@ -83,6 +83,7 @@ BT::NodeStatus SpeechActionBT::tick()
     goal.language = lang.value();
     goal.message = msg.value();
     goal.voice = voice.value();
+    goal.speed = goal.MEDIUM;
 
 
     std::cout << "[Speech]: Started." << std::endl <<

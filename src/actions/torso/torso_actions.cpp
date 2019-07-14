@@ -4,7 +4,7 @@
 std::map<std::string, ros::Publisher> TorsoRoutineBT::_publishers;
 
 TorsoRoutineBT::TorsoRoutineBT(const std::string& name, const NodeConfiguration& config)
-    : AsyncActionNode(name, config), nh_()
+    : SyncActionNode(name, config), nh_(), last_ang(-1000)
 {
 
 
@@ -18,6 +18,7 @@ BT::NodeStatus TorsoRoutineBT::tick()
     BT::Optional<std::string> topic = getInput<std::string>("topic");
     BT::Optional<double> angle = getInput<double>("angle");
 
+
     if(!topic)
     {
         throw BT::RuntimeError("missing required inputs [topic]: ",
@@ -28,25 +29,30 @@ BT::NodeStatus TorsoRoutineBT::tick()
                                    angle.error() );
     }
 
+    double ang_val = angle.value()*M_PI/180;
+
+    if(ang_val == last_ang)
+    {
+        return BT::NodeStatus::SUCCESS;
+    }
 
     auto publisher_pair = _publishers.find(topic.value());
 
     if(publisher_pair == _publishers.end())
     {
-        _publishers[topic.value()] = nh_.advertise<std_msgs::Float64>(topic.value(), 1);
+        _publishers[topic.value()] = nh_.advertise<std_msgs::Float64>(topic.value(), 1, true);
         ROS_INFO_STREAM("Created publisher to topic: " << topic.value());
     }
 
     publisher_pair = _publishers.find(topic.value());
     ros::Publisher &pub = publisher_pair->second;
 
-    double ang_val = angle.value()*180/M_PI;
 
     std_msgs::Float64 command;
 
     command.data = ang_val;
+    last_ang = ang_val;
 
-    _halt_requested.store(false);
 
     pub.publish(command);
     setStatus(BT::NodeStatus::RUNNING);
@@ -54,8 +60,4 @@ BT::NodeStatus TorsoRoutineBT::tick()
 
     return BT::NodeStatus::SUCCESS;
 
-}
-void TorsoRoutineBT::halt()
-{
-    _halt_requested.store(true);
 }

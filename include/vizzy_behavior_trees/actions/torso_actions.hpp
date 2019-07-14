@@ -8,10 +8,12 @@
 
 using namespace BT;
 
-class TorsoRoutineBT : public BT::AsyncActionNode
+class TorsoRoutineBT : public BT::SyncActionNode
 {
     public:
         TorsoRoutineBT(const std::string& name, const BT::NodeConfiguration& config);
+
+        double last_ang;
 
         static BT::PortsList providedPorts()
         {
@@ -22,10 +24,8 @@ class TorsoRoutineBT : public BT::AsyncActionNode
         ros::NodeHandle nh_;
 
         BT::NodeStatus tick() override;
-        virtual void halt() override;
 
     private:
-        std::atomic_bool _halt_requested;
         static std::map<std::string, ros::Publisher> _publishers;
 };
 
