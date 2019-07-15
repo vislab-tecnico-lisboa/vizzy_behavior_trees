@@ -29,7 +29,6 @@ GetInt16BT::GetInt16BT(const std::string& name, const NodeConfiguration& config)
 
 BT::NodeStatus GetInt16BT::tick()
 {
-    
     if(sub_.getNumPublishers() < 1)
     {
         return BT::NodeStatus::FAILURE;

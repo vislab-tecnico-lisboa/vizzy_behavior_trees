@@ -36,7 +36,7 @@ class GetFloat64BT : public SyncActionNode
 
     public:
 
-        int number;
+        double number;
         ros::Subscriber sub_;
         ros::CallbackQueue queue_;
 

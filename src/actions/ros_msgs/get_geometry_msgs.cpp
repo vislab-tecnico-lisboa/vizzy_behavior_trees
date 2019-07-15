@@ -11,7 +11,7 @@ void GetPoseArrayBT::callback(const geometry_msgs::PoseArray::ConstPtr &msg)
 
 
 GetPoseArrayBT::GetPoseArrayBT(const std::string& name, const NodeConfiguration& config)
-    : SyncActionNode(name, config)
+    : AsyncActionNode(name, config)
     {
         ros::NodeHandle nh_;
         BT::Optional<std::string> topic = TreeNode::getInput<std::string>("topic");

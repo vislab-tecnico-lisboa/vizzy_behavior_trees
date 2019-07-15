@@ -11,7 +11,7 @@
 using namespace BT; 
 
 //PoseArray
-class GetPoseArrayBT : public SyncActionNode
+class GetPoseArrayBT : public AsyncActionNode
 {
 
     public:
@@ -29,6 +29,7 @@ class GetPoseArrayBT : public SyncActionNode
     }
 
     NodeStatus tick() override;
+    void halt() override {};
     void callback(const geometry_msgs::PoseArray::ConstPtr &msg);
 
     

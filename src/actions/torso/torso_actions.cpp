@@ -4,7 +4,7 @@
 std::map<std::string, ros::Publisher> TorsoRoutineBT::_publishers;
 
 TorsoRoutineBT::TorsoRoutineBT(const std::string& name, const NodeConfiguration& config)
-    : SyncActionNode(name, config), nh_(), last_ang(-1000)
+    : AsyncActionNode(name, config), nh_(), last_ang(-1000)
 {
 
 

@@ -31,6 +31,7 @@ BT::NodeStatus WaitForXSeconds::tick()
         current+=0.01;
         if(_halt_requested)
         {
+            std::cout << "Halt requested!" << std::endl;
             return BT::NodeStatus::FAILURE;
         }
     }
