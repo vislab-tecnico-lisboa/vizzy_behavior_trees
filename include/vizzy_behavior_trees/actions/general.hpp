@@ -4,6 +4,26 @@
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
 
+class DebugAction : public BT::AsyncActionNode
+{
+    public:
+        DebugAction(const std::string& name, const BT::NodeConfiguration& config)
+        : AsyncActionNode(name, config)
+        {}
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("string")};
+        }
+
+
+        BT::NodeStatus tick() override;
+        virtual void halt() override {};
+
+    private:
+        std::atomic_bool _halt_requested;
+};
+
 class WaitForXSeconds : public BT::AsyncActionNode
 {
     public:

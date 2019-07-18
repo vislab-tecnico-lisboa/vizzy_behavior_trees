@@ -37,49 +37,50 @@ BT::NodeStatus GazeActionBT::tick()
     the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
     duplicate action clients.*/
 
-
-    auto action_client_pair = _gazeClients.find(action_name.value());
-    auto init_pair = _gazeClientsInitializing.find(action_name.value());
-
-    if(init_pair != _gazeClientsInitializing.end())
+    if(client_PTR == NULL) 
     {
-        if(init_pair->second)
+        auto action_client_pair = _gazeClients.find(action_name.value());
+        auto init_pair = _gazeClientsInitializing.find(action_name.value());
+
+        if(init_pair != _gazeClientsInitializing.end())
         {
-            return BT::NodeStatus::FAILURE;
-        }
-    }
-
-    std::shared_ptr<GazeClient> client_PTR;
-
-    if(action_client_pair == _gazeClients.end())
-    {
-        //Create action client and add it to the list of all clients
-
-        client_PTR = std::make_shared<GazeClient>(action_name.value());
-
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-        _gazeClientsInitializing[action_name.value()] = true;
-
-        if(!client_PTR->waitForServer(ros::Duration(1)))
-        {
-            ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-            _gazeClients.erase(action_name.value());
-            _gazeClientsInitializing.erase(action_name.value());
-            return BT::NodeStatus::FAILURE;
+            if(init_pair->second)
+            {
+                return BT::NodeStatus::FAILURE;
+            }
         }
 
-        _gazeClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
-        _gazeClients[action_name.value()] = client_PTR;
-        ROS_INFO_STREAM("Number of gaze clients: " << _gazeClients.size());
+        if(action_client_pair == _gazeClients.end())
+        {
+            //Create action client and add it to the list of all clients
 
-    }else
-    {
-        client_PTR = action_client_pair->second;
+            client_PTR = std::make_shared<GazeClient>(action_name.value());
+
+            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
+
+            _gazeClientsInitializing[action_name.value()] = true;
+
+            if(!client_PTR->waitForServer(ros::Duration(1)))
+            {
+                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
+                _gazeClients.erase(action_name.value());
+                _gazeClientsInitializing.erase(action_name.value());
+                return BT::NodeStatus::FAILURE;
+            }
+
+            _gazeClientsInitializing[action_name.value()] = false;
+
+            ROS_INFO_STREAM("Found action server of: " << action_name.value());
+            _gazeClients[action_name.value()] = client_PTR;
+            ROS_INFO_STREAM("Number of gaze clients: " << _gazeClients.size());
+
+        }else
+        {
+            client_PTR = action_client_pair->second;
+        }
+
     }
-
 
     geometry_msgs::PoseStamped poseStamped = pose.value();
 
@@ -98,16 +99,10 @@ BT::NodeStatus GazeActionBT::tick()
     std::cout << "[Gaze]: Started." << std::endl <<
         "Fixation point: " << goal << std::endl;
 
-    _halt_requested.store(false);
-
     client_PTR->isServerConnected();
 
     client_PTR->sendGoal(goal);
 
     return BT::NodeStatus::SUCCESS;
 
-}
-
-void GazeActionBT::halt()
-{
 }

@@ -41,47 +41,48 @@ BT::NodeStatus ChargeActionBT::tick()
     the same kind of actionlib (i.e. ChargeAction) and avoid creating
     duplicate action clients.*/
 
-
-    auto action_client_pair = _chargeClients.find(action_name.value());
-    auto init_pair = _chargeClientsInitializing.find(action_name.value());
-
-    if(init_pair != _chargeClientsInitializing.end())
+    if(client_PTR == NULL) 
     {
-        if(init_pair->second)
+        auto action_client_pair = _chargeClients.find(action_name.value());
+        auto init_pair = _chargeClientsInitializing.find(action_name.value());
+
+        if(init_pair != _chargeClientsInitializing.end())
         {
-            return BT::NodeStatus::FAILURE;
-        }
-    }
-
-    std::shared_ptr<ChargeClient> client_PTR;
-
-    if(action_client_pair == _chargeClients.end())
-    {
-        //Create action client and add it to the list of all clients
-
-        client_PTR = std::make_shared<ChargeClient>(action_name.value());
-
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-        _chargeClientsInitializing[action_name.value()] = true;
-
-        if(!client_PTR->waitForServer(ros::Duration(1)))
-        {
-            ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-            _chargeClients.erase(action_name.value());
-            _chargeClientsInitializing.erase(action_name.value());
-            return BT::NodeStatus::FAILURE;
+            if(init_pair->second)
+            {
+                return BT::NodeStatus::FAILURE;
+            }
         }
 
-        _chargeClientsInitializing[action_name.value()] = false;
+        if(action_client_pair == _chargeClients.end())
+        {
+            //Create action client and add it to the list of all clients
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
-        _chargeClients[action_name.value()] = client_PTR;
-        ROS_INFO_STREAM("Number of move_base clients: " << _chargeClients.size());
+            client_PTR = std::make_shared<ChargeClient>(action_name.value());
 
-    }else
-    {
-        client_PTR = action_client_pair->second;
+            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
+
+            _chargeClientsInitializing[action_name.value()] = true;
+
+            if(!client_PTR->waitForServer(ros::Duration(1)))
+            {
+                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
+                _chargeClients.erase(action_name.value());
+                _chargeClientsInitializing.erase(action_name.value());
+                return BT::NodeStatus::FAILURE;
+            }
+
+            _chargeClientsInitializing[action_name.value()] = false;
+
+            ROS_INFO_STREAM("Found action server of: " << action_name.value());
+            _chargeClients[action_name.value()] = client_PTR;
+            ROS_INFO_STREAM("Number of move_base clients: " << _chargeClients.size());
+
+        }else
+        {
+            client_PTR = action_client_pair->second;
+        }
+
     }
 
 
@@ -94,20 +95,13 @@ BT::NodeStatus ChargeActionBT::tick()
 
     auto charge_state = client_PTR->getState();
 
-    setStatus(BT::NodeStatus::RUNNING);
-
     while(!charge_state.isDone())
     {
-        if(_halt_requested)
-        {
-            client_PTR->cancelAllGoals();
-            return BT::NodeStatus::FAILURE;
-        }
-
         charge_state = client_PTR->getState();
-        SleepMS(100);
+        setStatusRunningAndYield();
     }
 
+    cleanup(false);
 
     if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
@@ -118,9 +112,21 @@ BT::NodeStatus ChargeActionBT::tick()
 
 }
 
+void ChargeActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
+        client_PTR->cancelAllGoals();
+
+    }
+
+}
+
 void ChargeActionBT::halt()
 {
-    _halt_requested.store(true);
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    ChargeActionBT::halt();
 }
 
 //CheckBattery

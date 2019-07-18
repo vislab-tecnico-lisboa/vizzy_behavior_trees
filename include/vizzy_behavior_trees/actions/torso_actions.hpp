@@ -8,7 +8,7 @@
 
 using namespace BT;
 
-class TorsoRoutineBT : public BT::AsyncActionNode
+class TorsoRoutineBT : public BT::SyncActionNode
 {
     public:
         TorsoRoutineBT(const std::string& name, const BT::NodeConfiguration& config);
@@ -24,7 +24,6 @@ class TorsoRoutineBT : public BT::AsyncActionNode
         ros::NodeHandle nh_;
 
         BT::NodeStatus tick() override;
-        void halt() override {};
 
     private:
         static std::map<std::string, ros::Publisher> _publishers;

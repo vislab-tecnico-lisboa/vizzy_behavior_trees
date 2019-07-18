@@ -16,7 +16,7 @@
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 
-class MoveBaseActionBT : public BT::AsyncActionNode
+class MoveBaseActionBT : public BT::CoroActionNode
 {
     public:
 
@@ -26,9 +26,13 @@ class MoveBaseActionBT : public BT::AsyncActionNode
         parts of the behavior_tree).*/
 
 
+        std::shared_ptr<MoveBaseClient> client_PTR;
+
+
         MoveBaseActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config)
+            : CoroActionNode(name, config)
         {
+            client_PTR == NULL;
         }
 
         static BT::PortsList providedPorts()
@@ -39,7 +43,7 @@ class MoveBaseActionBT : public BT::AsyncActionNode
         }
 
         BT::NodeStatus tick() override;
-
+        void cleanup(bool halted);
         virtual void halt() override;
 
     private:

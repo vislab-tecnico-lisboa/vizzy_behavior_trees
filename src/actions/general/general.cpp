@@ -1,5 +1,24 @@
 #include <vizzy_behavior_trees/actions/general.hpp>
 
+
+BT::NodeStatus DebugAction::tick()
+{
+    BT::Optional<std::string> toPrint = getInput<std::string>("string");
+
+    if(!toPrint)
+    {
+        throw BT::RuntimeError("missing required inputs [string]: ",
+                                   toPrint.error() );
+    }
+
+    std::cout << toPrint.value() << std::endl;
+
+    return BT::NodeStatus::SUCCESS;
+}
+
+
+
+//WaitForXSeconds
 BT::NodeStatus WaitForXSeconds::tick()
 {
     double time_d;

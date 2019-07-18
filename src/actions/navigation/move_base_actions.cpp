@@ -36,47 +36,48 @@ BT::NodeStatus MoveBaseActionBT::tick()
     the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
     duplicate action clients.*/
 
-
-    auto action_client_pair = _moveBaseClients.find(action_name.value());
-    auto init_pair = _moveBaseClientsInitializing.find(action_name.value());
-
-    if(init_pair != _moveBaseClientsInitializing.end())
-    {
-        if(init_pair->second)
+    if(client_PTR == NULL) 
         {
-            return BT::NodeStatus::FAILURE;
-        }
-    }
+        auto action_client_pair = _moveBaseClients.find(action_name.value());
+        auto init_pair = _moveBaseClientsInitializing.find(action_name.value());
 
-    std::shared_ptr<MoveBaseClient> client_PTR;
-
-    if(action_client_pair == _moveBaseClients.end())
-    {
-        //Create action client and add it to the list of all clients
-
-        client_PTR = std::make_shared<MoveBaseClient>(action_name.value());
-
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-        _moveBaseClientsInitializing[action_name.value()] = true;
-
-        if(!client_PTR->waitForServer(ros::Duration(1)))
+        if(init_pair != _moveBaseClientsInitializing.end())
         {
-            ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-            _moveBaseClients.erase(action_name.value());
-            _moveBaseClientsInitializing.erase(action_name.value());
-            return BT::NodeStatus::FAILURE;
+            if(init_pair->second)
+            {
+                return BT::NodeStatus::FAILURE;
+            }
         }
 
-        _moveBaseClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
-        _moveBaseClients[action_name.value()] = client_PTR;
-        ROS_INFO_STREAM("Number of move_base clients: " << _moveBaseClients.size());
+        if(action_client_pair == _moveBaseClients.end())
+        {
+            //Create action client and add it to the list of all clients
 
-    }else
-    {
-        client_PTR = action_client_pair->second;
+            client_PTR = std::make_shared<MoveBaseClient>(action_name.value());
+
+            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
+
+            _moveBaseClientsInitializing[action_name.value()] = true;
+
+            if(!client_PTR->waitForServer(ros::Duration(1)))
+            {
+                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
+                _moveBaseClients.erase(action_name.value());
+                _moveBaseClientsInitializing.erase(action_name.value());
+                return BT::NodeStatus::FAILURE;
+            }
+
+            _moveBaseClientsInitializing[action_name.value()] = false;
+
+            ROS_INFO_STREAM("Found action server of: " << action_name.value());
+            _moveBaseClients[action_name.value()] = client_PTR;
+            ROS_INFO_STREAM("Number of move_base clients: " << _moveBaseClients.size());
+
+        }else
+        {
+            client_PTR = action_client_pair->second;
+        }
     }
 
 
@@ -92,20 +93,13 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
     auto move_state = client_PTR->getState();
 
-    setStatus(BT::NodeStatus::RUNNING);
-
     while(!move_state.isDone())
     {
-        if(_halt_requested)
-        {
-            client_PTR->cancelAllGoals();
-            return BT::NodeStatus::FAILURE;
-        }
-
         move_state = client_PTR->getState();
-        SleepMS(100);
+        setStatusRunningAndYield();
     }
 
+    cleanup(false);
 
     if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
@@ -116,8 +110,18 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
 }
 
+void MoveBaseActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
+        client_PTR->cancelAllGoals();
+    }
+}
+
 void MoveBaseActionBT::halt()
 {
-    _halt_requested.store(true);
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    MoveBaseActionBT::halt();
 }
 

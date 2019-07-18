@@ -45,48 +45,48 @@ BT::NodeStatus CartesianActionBT::tick()
     and avoid creating duplicate action clients (i.e. using the same action in multiple
     parts of the behavior_tree).*/
 
-
-    auto action_client_pair = _cartesianClients.find(action_name.value());
-    auto init_pair = _cartesianClientsInitializing.find(action_name.value());
-
-    if(init_pair != _cartesianClientsInitializing.end())
+    if(client_PTR == NULL)
     {
-        if(init_pair->second)
+        auto action_client_pair = _cartesianClients.find(action_name.value());
+        auto init_pair = _cartesianClientsInitializing.find(action_name.value());
+
+        if(init_pair != _cartesianClientsInitializing.end())
         {
-            return BT::NodeStatus::FAILURE;
-        }
-    }
-
-
-    std::shared_ptr<CartesianClient> client_PTR;
-
-    if(action_client_pair == _cartesianClients.end())
-    {
-        //Create action client and add it to the list of all clients
-
-        client_PTR = std::make_shared<CartesianClient>(action_name.value());
-
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-        _cartesianClientsInitializing[action_name.value()] = true;
-
-        if(!client_PTR->waitForServer(ros::Duration(1)))
-        {
-            ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-            _cartesianClients.erase(action_name.value());
-            _cartesianClientsInitializing.erase(action_name.value());
-            return BT::NodeStatus::FAILURE;
+            if(init_pair->second)
+            {
+                return BT::NodeStatus::FAILURE;
+            }
         }
 
-        _cartesianClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
-        _cartesianClients[action_name.value()] = client_PTR;
-        ROS_INFO_STREAM("Number of cartesian clients: " << _cartesianClients.size());
+        if(action_client_pair == _cartesianClients.end())
+        {
+            //Create action client and add it to the list of all clients
 
-    }else
-    {
-        client_PTR = action_client_pair->second;
+            client_PTR = std::make_shared<CartesianClient>(action_name.value());
+
+            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
+
+            _cartesianClientsInitializing[action_name.value()] = true;
+
+            if(!client_PTR->waitForServer(ros::Duration(1)))
+            {
+                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
+                _cartesianClients.erase(action_name.value());
+                _cartesianClientsInitializing.erase(action_name.value());
+                return BT::NodeStatus::FAILURE;
+            }
+
+            _cartesianClientsInitializing[action_name.value()] = false;
+
+            ROS_INFO_STREAM("Found action server of: " << action_name.value());
+            _cartesianClients[action_name.value()] = client_PTR;
+            ROS_INFO_STREAM("Number of cartesian clients: " << _cartesianClients.size());
+
+        }else
+        {
+            client_PTR = action_client_pair->second;
+        }
     }
 
     if(tipo.value() == "CARTESIAN")
@@ -221,8 +221,6 @@ BT::NodeStatus CartesianActionBT::tick()
 
             }
 
-
-            
             double rx;
 
             if(left)
@@ -243,8 +241,6 @@ BT::NodeStatus CartesianActionBT::tick()
             pub_origintal.publish(poseStamped);
 
         }
-
-
 
     }else if(tipo.value() == "HOME"){
         goal.type = goal.HOME;
@@ -267,36 +263,40 @@ BT::NodeStatus CartesianActionBT::tick()
 
     auto move_state = client_PTR->getState();
 
-    setStatus(BT::NodeStatus::RUNNING);
 
-
-    /*while(!move_state.isDone())
+    while(!move_state.isDone())
     {
-        if(_halt_requested)
-        {
+        move_state = client_PTR->getState();
+        setStatusRunningAndYield();
+    }
+
+    cleanup(false);
+
+
+    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        return BT::NodeStatus::SUCCESS;
+    }else{
+        return BT::NodeStatus::FAILURE;
+    }
+
+
+}
+
+void CartesianActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
             vizzy_msgs::CartesianGoal goal;
             goal.type = goal.PREEMPT;
             client_PTR->sendGoal(goal);
-            return BT::NodeStatus::FAILURE;
-        }
-
-        move_state = client_PTR->getState();
-        SleepMS(100);
-    }*/
-
-
-/*    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {*/
-        return BT::NodeStatus::SUCCESS;
-    /*}else{
-        return BT::NodeStatus::FAILURE;
-    }*/
-
+    }
 
 }
 
 void CartesianActionBT::halt()
 {
-
-    _halt_requested.store(true);
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    CartesianActionBT::halt();
 }

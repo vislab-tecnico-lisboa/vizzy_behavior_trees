@@ -48,6 +48,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<GazeActionBT>("GazeAtTarget");
   factory.registerNodeType<SelectFieldFromPoseStamped>("SelectFieldFromPoseStamped");
   factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
+  factory.registerNodeType<DebugAction>("DebugAction");
 
   std::string xmlPath;
   nPriv.param<std::string>("bt_xml", xmlPath, "");

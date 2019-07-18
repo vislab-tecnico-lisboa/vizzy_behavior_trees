@@ -38,46 +38,48 @@ BT::NodeStatus SpeechActionBT::tick()
     duplicate action clients.*/
 
 
-    auto action_client_pair = _speechClients.find(action_name.value());
-    auto init_pair = _speechClientsInitializing.find(action_name.value());
-
-    if(init_pair != _speechClientsInitializing.end())
+    if(client_PTR == NULL)
     {
-        if(init_pair->second)
+        auto action_client_pair = _speechClients.find(action_name.value());
+        auto init_pair = _speechClientsInitializing.find(action_name.value());
+
+        if(init_pair != _speechClientsInitializing.end())
         {
-            return BT::NodeStatus::FAILURE;
-        }
-    }
-
-    std::shared_ptr<SpeechClient> client_PTR;
-
-    if(action_client_pair == _speechClients.end())
-    {
-        //Create action client and add it to the list of all clients
-
-        client_PTR = std::make_shared<SpeechClient>(action_name.value());
-
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-        _speechClientsInitializing[action_name.value()] = true;
-
-        if(!client_PTR->waitForServer(ros::Duration(1)))
-        {
-            ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-            _speechClients.erase(action_name.value());
-            _speechClientsInitializing.erase(action_name.value());
-            return BT::NodeStatus::FAILURE;
+            if(init_pair->second)
+            {
+                return BT::NodeStatus::FAILURE;
+            }
         }
 
-        _speechClientsInitializing[action_name.value()] = false;
 
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
-        _speechClients[action_name.value()] = client_PTR;
-        ROS_INFO_STREAM("Number of move_base clients: " << _speechClients.size());
+        if(action_client_pair == _speechClients.end())
+        {
+            //Create action client and add it to the list of all clients
 
-    }else
-    {
-        client_PTR = action_client_pair->second;
+            client_PTR = std::make_shared<SpeechClient>(action_name.value());
+
+            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
+
+            _speechClientsInitializing[action_name.value()] = true;
+
+            if(!client_PTR->waitForServer(ros::Duration(1)))
+            {
+                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
+                _speechClients.erase(action_name.value());
+                _speechClientsInitializing.erase(action_name.value());
+                return BT::NodeStatus::FAILURE;
+            }
+
+            _speechClientsInitializing[action_name.value()] = false;
+
+            ROS_INFO_STREAM("Found action server of: " << action_name.value());
+            _speechClients[action_name.value()] = client_PTR;
+            ROS_INFO_STREAM("Number of move_base clients: " << _speechClients.size());
+
+        }else
+        {
+            client_PTR = action_client_pair->second;
+        }
     }
 
     goal.language = lang.value();
@@ -95,15 +97,17 @@ BT::NodeStatus SpeechActionBT::tick()
 
     client_PTR->sendGoalAndWait(goal);
 
+    auto speech_state = client_PTR->getState();
+
+    while(!speech_state.isDone())
+    {
+        speech_state = client_PTR->getState();
+        setStatusRunningAndYield();
+    }
 
     auto result = client_PTR->getResult();
 
-
-    if(_halt_requested)
-    {
-        client_PTR->cancelAllGoals();
-        return BT::NodeStatus::FAILURE;
-    }
+    cleanup(false);
 
     if(result->success)
     {
@@ -116,7 +120,17 @@ BT::NodeStatus SpeechActionBT::tick()
 
 }
 
+void SpeechActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
+        client_PTR->cancelAllGoals();
+    }
+}
+
 void SpeechActionBT::halt()
 {
-    _halt_requested.store(true);
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    SpeechActionBT::halt();
 }

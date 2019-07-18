@@ -4,7 +4,7 @@
 std::map<std::string, ros::Publisher> TorsoRoutineBT::_publishers;
 
 TorsoRoutineBT::TorsoRoutineBT(const std::string& name, const NodeConfiguration& config)
-    : AsyncActionNode(name, config), nh_(), last_ang(-1000)
+    : SyncActionNode(name, config), nh_(), last_ang(-1000)
 {
 
 
@@ -55,9 +55,12 @@ BT::NodeStatus TorsoRoutineBT::tick()
 
 
     pub.publish(command);
-    setStatus(BT::NodeStatus::RUNNING);
-    SleepMS(1000);
 
-    return BT::NodeStatus::SUCCESS;
+    if(pub.getNumSubscribers() < 1)
+    {
+        return BT::NodeStatus::FAILURE;
+    }else{
+        return BT::NodeStatus::SUCCESS;
+    }
 
 }

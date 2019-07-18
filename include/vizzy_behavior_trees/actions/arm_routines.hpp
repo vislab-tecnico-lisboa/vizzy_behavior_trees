@@ -8,7 +8,7 @@
 
 using namespace BT;
 
-class ArmRoutineBT : public BT::AsyncActionNode
+class ArmRoutineBT : public BT::SyncActionNode
 {
     public:
         ArmRoutineBT(const std::string& name, const BT::NodeConfiguration& config);
@@ -22,7 +22,6 @@ class ArmRoutineBT : public BT::AsyncActionNode
         ros::NodeHandle nh_;
 
         BT::NodeStatus tick() override;
-        virtual void halt() override;
 
     private:
         std::atomic_bool _halt_requested;

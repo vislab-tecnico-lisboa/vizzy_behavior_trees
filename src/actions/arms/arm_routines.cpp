@@ -3,12 +3,8 @@
 std::map<std::string, ros::Publisher> ArmRoutineBT::_publishers;
 
 ArmRoutineBT::ArmRoutineBT(const std::string& name, const NodeConfiguration& config)
-    : AsyncActionNode(name, config), nh_()
+    : SyncActionNode(name, config), nh_()
 {
-
-
-
-
 }
 
 BT::NodeStatus ArmRoutineBT::tick()
@@ -65,16 +61,15 @@ BT::NodeStatus ArmRoutineBT::tick()
         return BT::NodeStatus::FAILURE;
     }
 
-    _halt_requested.store(false);
+    if(pub.getNumSubscribers() < 1)
+    {
+        return BT::NodeStatus::FAILURE;
+    }else{
+        pub.publish(command);
+        return BT::NodeStatus::SUCCESS;
+    }
 
-    pub.publish(command);
-    setStatus(BT::NodeStatus::RUNNING);
-    SleepMS(1000);
 
     return BT::NodeStatus::SUCCESS;
 
-}
-void ArmRoutineBT::halt()
-{
-    _halt_requested.store(true);
 }

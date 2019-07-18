@@ -15,7 +15,7 @@
 typedef actionlib::SimpleActionClient<vizzy_msgs::CartesianAction> CartesianClient;
 
 
-class CartesianActionBT : public BT::AsyncActionNode
+class CartesianActionBT : public BT::CoroActionNode
 {
     public:
 
@@ -32,12 +32,15 @@ class CartesianActionBT : public BT::AsyncActionNode
         ros::Publisher pub_fixed;
 
 
+        std::shared_ptr<CartesianClient> client_PTR;
+
         CartesianActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config), tfListener(tfBuffer)
+            : CoroActionNode(name, config), tfListener(tfBuffer)
         {
             ros::NodeHandle nh;
             pub_origintal = nh.advertise<geometry_msgs::PoseStamped>("original", 1);
             pub_fixed = nh.advertise<geometry_msgs::PoseStamped>("fixed", 1);
+            client_PTR = NULL;
         }
 
         static BT::PortsList providedPorts()
@@ -49,8 +52,8 @@ class CartesianActionBT : public BT::AsyncActionNode
         }
 
         BT::NodeStatus tick() override;
-
         virtual void halt() override;
+        void cleanup(bool halted);
 
     private:
         std::atomic_bool _halt_requested;

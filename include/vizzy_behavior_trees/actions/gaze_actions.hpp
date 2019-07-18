@@ -11,7 +11,7 @@
 typedef actionlib::SimpleActionClient<vizzy_msgs::GazeAction> GazeClient;
 
 
-class GazeActionBT : public BT::AsyncActionNode
+class GazeActionBT : public BT::SyncActionNode
 {
     public:
 
@@ -20,10 +20,13 @@ class GazeActionBT : public BT::AsyncActionNode
         and avoid creating duplicate action clients (i.e. using the same action in multiple
         parts of the behavior_tree).*/
 
+        
+        std::shared_ptr<GazeClient> client_PTR;
 
         GazeActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config)
+            : SyncActionNode(name, config)
         {
+            client_PTR = NULL;
         }
 
         static BT::PortsList providedPorts()
@@ -34,8 +37,6 @@ class GazeActionBT : public BT::AsyncActionNode
         }
 
         BT::NodeStatus tick() override;
-
-        virtual void halt() override;
 
     private:
         std::atomic_bool _halt_requested;

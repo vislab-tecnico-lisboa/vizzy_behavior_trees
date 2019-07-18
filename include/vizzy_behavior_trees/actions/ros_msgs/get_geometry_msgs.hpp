@@ -11,7 +11,7 @@
 using namespace BT; 
 
 //PoseArray
-class GetPoseArrayBT : public AsyncActionNode
+class GetPoseArrayBT : public SyncActionNode
 {
 
     public:
@@ -29,7 +29,6 @@ class GetPoseArrayBT : public AsyncActionNode
     }
 
     NodeStatus tick() override;
-    void halt() override {};
     void callback(const geometry_msgs::PoseArray::ConstPtr &msg);
 
     
@@ -38,14 +37,14 @@ class GetPoseArrayBT : public AsyncActionNode
 
 
 //SelectPoseStamped from a PoseArray
-class SelectPoseStamped : public AsyncActionNode
+class SelectPoseStamped : public SyncActionNode
 {
 
     public:
         geometry_msgs::PoseStamped pose;
 
         SelectPoseStamped(const std::string& string, const NodeConfiguration& config)
-        : AsyncActionNode(string, config){}
+        : SyncActionNode(string, config){}
 
 
         static PortsList providedPorts()
@@ -56,18 +55,17 @@ class SelectPoseStamped : public AsyncActionNode
         }
 
         NodeStatus tick() override;
-        void halt() override {};
 };
 
 //Select field from PoseStamped
-class SelectFieldFromPoseStamped : public AsyncActionNode
+class SelectFieldFromPoseStamped : public SyncActionNode
 {
 
     public:
         geometry_msgs::PoseStamped pose;
 
         SelectFieldFromPoseStamped(const std::string& string, const NodeConfiguration& config)
-        : AsyncActionNode(string, config){}
+        : SyncActionNode(string, config){}
 
 
         static PortsList providedPorts()
@@ -78,7 +76,6 @@ class SelectFieldFromPoseStamped : public AsyncActionNode
         }
 
         NodeStatus tick() override;
-        void halt() override {};
 };
 
 #endif

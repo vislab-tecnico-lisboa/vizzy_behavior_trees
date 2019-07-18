@@ -15,7 +15,7 @@
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::ChargeAction> ChargeClient;
 
-class ChargeActionBT : public BT::AsyncActionNode
+class ChargeActionBT : public BT::CoroActionNode
 {
     public:
 
@@ -25,9 +25,13 @@ class ChargeActionBT : public BT::AsyncActionNode
         parts of the behavior_tree).*/
 
 
+        std::shared_ptr<ChargeClient> client_PTR;
+
+
         ChargeActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config)
+            : CoroActionNode(name, config)
         {
+            client_PTR = NULL;
         }
 
         static BT::PortsList providedPorts()
@@ -37,7 +41,7 @@ class ChargeActionBT : public BT::AsyncActionNode
         }
 
         BT::NodeStatus tick() override;
-
+        void cleanup(bool halted);
         virtual void halt() override;
 
     private:

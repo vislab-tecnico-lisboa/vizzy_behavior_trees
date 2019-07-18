@@ -10,12 +10,16 @@
 
 typedef actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> SpeechClient;
 
-class SpeechActionBT : public BT::AsyncActionNode
+class SpeechActionBT : public BT::CoroActionNode
 {
     public:
+
+        std::shared_ptr<SpeechClient> client_PTR;
+    
         SpeechActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : AsyncActionNode(name, config)
+            : CoroActionNode(name, config)
         {
+            client_PTR = NULL;
         }
 
         static BT::PortsList providedPorts()
@@ -27,7 +31,7 @@ class SpeechActionBT : public BT::AsyncActionNode
         }
 
         BT::NodeStatus tick() override;
-
+        void cleanup(bool halted);
         virtual void halt() override;
 
     private:

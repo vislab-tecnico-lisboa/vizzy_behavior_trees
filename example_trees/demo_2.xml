@@ -6,7 +6,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="ChargeST">
         <SequenceStar>
-            <Action voice="Joaquim" utterance="Tenho fome" ID="Speak" language="pt_PT" action_name="nuance_speech_tts" name="Hungry"/>
+            <Action utterance="Tenho fome" voice="pt-PT-Wavenet-D" ID="Speak" language="pt_PT" action_name="/gcloud_tts"/>
             <Action result="SUCCESS" seconds="2" ID="WaitForXSeconds" name="Wait2Seconds"/>
             <Fallback>
                 <SequenceStar>
@@ -15,7 +15,7 @@
                     </RetryUntilSuccesful>
                     <Parallel threshold="2">
                         <Repeat num_cycles="10">
-                            <Action voice="Joaquim" utterance="bip bip" ID="Speak" language="pt_PT" action_name="nuance_speech_ttsnuance_speech_tts"/>
+                            <Action utterance="bip bip" voice="pt-PT-Wavenet-D" ID="Speak" language="pt_PT" action_name="/gcloud_tts"/>
                         </Repeat>
                         <Action action="charging_action" ID="Charge" action_name="CHARGE"/>
                     </Parallel>
