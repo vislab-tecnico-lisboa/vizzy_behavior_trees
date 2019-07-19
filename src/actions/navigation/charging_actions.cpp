@@ -126,7 +126,7 @@ void ChargeActionBT::halt()
 {
     std::cout << name() <<": Halted." << std::endl;
     cleanup(true);
-    ChargeActionBT::halt();
+    CoroActionNode::halt();
 }
 
 //CheckBattery

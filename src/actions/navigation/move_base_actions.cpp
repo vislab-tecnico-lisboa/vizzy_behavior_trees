@@ -87,8 +87,6 @@ BT::NodeStatus MoveBaseActionBT::tick()
     std::cout << "[MoveBase]: Started." << std::endl <<
         "Pose: " << goal << std::endl;
 
-    _halt_requested.store(false);
-
     client_PTR->sendGoal(goal);
 
     auto move_state = client_PTR->getState();
@@ -122,6 +120,6 @@ void MoveBaseActionBT::halt()
 {
     std::cout << name() <<": Halted." << std::endl;
     cleanup(true);
-    MoveBaseActionBT::halt();
+    CoroActionNode::halt();
 }
 

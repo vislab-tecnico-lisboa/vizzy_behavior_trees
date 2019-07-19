@@ -96,9 +96,6 @@ BT::NodeStatus GazeActionBT::tick()
 
     goal.fixation_point.point = poseStamped.pose.position;
 
-    std::cout << "[Gaze]: Started." << std::endl <<
-        "Fixation point: " << goal << std::endl;
-
     client_PTR->isServerConnected();
 
     client_PTR->sendGoal(goal);

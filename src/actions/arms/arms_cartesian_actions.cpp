@@ -255,7 +255,6 @@ BT::NodeStatus CartesianActionBT::tick()
     std::cout << "[Cartesian]: Started." << std::endl <<
         "Goal: " << goal << std::endl;
 
-    _halt_requested.store(false);
 
     client_PTR->isServerConnected();
 
@@ -298,5 +297,5 @@ void CartesianActionBT::halt()
 {
     std::cout << name() <<": Halted." << std::endl;
     cleanup(true);
-    CartesianActionBT::halt();
+    CoroActionNode::halt();
 }

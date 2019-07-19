@@ -132,5 +132,5 @@ void SpeechActionBT::halt()
 {
     std::cout << name() <<": Halted." << std::endl;
     cleanup(true);
-    SpeechActionBT::halt();
+    CoroActionNode::halt();
 }
