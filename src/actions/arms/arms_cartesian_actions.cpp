@@ -274,8 +274,12 @@ BT::NodeStatus CartesianActionBT::tick()
 
     if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
+        std::cout << "[Cartesian]: ENDED." << std::endl <<
+            "SUCCESS" << std::endl;
         return BT::NodeStatus::SUCCESS;
     }else{
+        std::cout << "[Cartesian]: ENDED." << std::endl <<
+            "FAILURE" << std::endl;
         return BT::NodeStatus::FAILURE;
     }
 
