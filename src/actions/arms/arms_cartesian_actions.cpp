@@ -89,23 +89,24 @@ BT::NodeStatus CartesianActionBT::tick()
         }
     }
 
+    geometry_msgs::PoseStamped poseStamped = pose.value();
+
+    if(poseStamped.header.frame_id == "")
+    {
+        goal.end_effector_pose.header.frame_id = frame_id.value();
+    }else
+    {
+        goal.end_effector_pose.header.frame_id = poseStamped.header.frame_id;
+    }
+
     if(tipo.value() == "CARTESIAN")
     {
-
-        geometry_msgs::PoseStamped poseStamped = pose.value();
 
         goal.type = goal.CARTESIAN;
 
         bool left;
 
 
-        if(poseStamped.header.frame_id == "")
-        {
-            goal.end_effector_pose.header.frame_id = frame_id.value();
-        }else
-        {
-            goal.end_effector_pose.header.frame_id = poseStamped.header.frame_id;
-        }
 
         //Transform it to the appropriate shoulder frame to make necessary computations
         //Maximum arm length approx 0.40 cm. This avoids strange orientations of the end effector
