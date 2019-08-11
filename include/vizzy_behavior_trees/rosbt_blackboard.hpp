@@ -18,7 +18,7 @@ can be shared among all tree nodes.*/
 class RosBlackBoard
 {
     public:
-    
+
         static BT::Any* getAnyPublisher(std::string& key)
         {
             return _publishers_bb->getAny(key);
@@ -40,16 +40,40 @@ class RosBlackBoard
             return _actionclients_bb->getAny(key);
         }
 
-        /*Returning a raw pointer. Reasons: creating shared_ptrs is expensive and
+        /*Returning a raw pointers. Reasons: creating shared_ptrs is expensive and
         objects on each blackboard will not be replaced. It does not make sense
         to have two different types for the same topic/action/service name. An assert
         will stop execution if that happens.
         I'm using shared_ptr instead of unique_ptr because "Any" requires the object to be copiable.*/
 
         template <typename T>
-        static T* getPublisherOrInit(const std::string& topic)
+        static ros::Publisher* getPublisherOrInit(const std::string& topic, bool latch=true)
         {
+            auto anyPublisher = _publishers_bb->getAny(topic);
 
+            /*Publisher doesnt exist yet. Create it. */
+            if(!anyPublisher || anyPublisher->empty())
+            {
+                //It creates a nh for now... Not sure how to solve this, since ros_init needs to be called first
+                ros::NodeHandle nh;
+
+                std::shared_ptr<ros::Publisher> publisher_PTR = std::make_shared<ros::Publisher>
+                    (std::move(nh.advertise<T>(topic, 1, latch)));
+
+                ros::Publisher *publisherRawPTR = publisher_PTR.get();
+                _publishers_bb->set(topic, std::move(publisher_PTR));
+                return publisherRawPTR;
+            }else{
+                /*Check type is ok before returning*/
+                const std::type_info& info = typeid(std::shared_ptr<ros::Publisher>);
+                const std::type_info& gotType = anyPublisher->type();
+
+                assert(info.hash_code() == gotType.hash_code());
+                /*Type is ok, so we can return the pointer. It would be odd to have
+                another thing than a publisher here, right?...*/
+
+                return anyPublisher->cast<std::shared_ptr<ros::Publisher>>().get();
+            }
         }
 
         template <typename T>
