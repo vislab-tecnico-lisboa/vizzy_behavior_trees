@@ -63,6 +63,7 @@ add_library(vizzy_actions STATIC
   src/actions/ros_msgs/get_std_msgs.cpp
   src/actions/ros_msgs/get_geometry_msgs.cpp
   src/conditions/general/general.cpp
+  src/rosbt/rosbt_blackboard.cpp
 )
 add_dependencies(vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp)
 target_link_libraries(vizzy_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
