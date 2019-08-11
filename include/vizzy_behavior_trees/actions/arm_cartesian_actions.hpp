@@ -10,6 +10,7 @@
 #include <vizzy_behavior_trees/conversions.hpp>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::CartesianAction> CartesianClient;
@@ -19,11 +20,6 @@ class CartesianActionBT : public BT::CoroActionNode
 {
     public:
 
-        /*This allows us to have multiple action names for
-        the same kind of actionlib action (i.e. CartesianAction for more than one robot)
-        and avoid creating duplicate action clients (i.e. using the same action in multiple
-        parts of the behavior_tree).*/
-
         tf2_ros::Buffer tfBuffer;
         tf2_ros::TransformListener tfListener;
 
@@ -32,7 +28,7 @@ class CartesianActionBT : public BT::CoroActionNode
         ros::Publisher pub_fixed;
 
 
-        std::shared_ptr<CartesianClient> client_PTR;
+        CartesianClient* client_PTR;
 
         CartesianActionBT(const std::string& name, const BT::NodeConfiguration& config)
             : CoroActionNode(name, config), tfListener(tfBuffer)
@@ -57,8 +53,6 @@ class CartesianActionBT : public BT::CoroActionNode
 
     private:
         std::atomic_bool _halt_requested;
-        static std::map<std::string, std::shared_ptr<CartesianClient>> _cartesianClients;
-        static std::map<std::string, bool> _cartesianClientsInitializing;
 };
 
 

@@ -44,7 +44,7 @@ class RosBlackBoard
         objects on each blackboard will not be replaced. It does not make sense
         to have two different types for the same topic/action/service name. An assert
         will stop execution if that happens.
-        I'm using shared_ptr because "Any" requires the object to be copiable.*/
+        I'm using shared_ptr instead of unique_ptr because "Any" requires the object to be copiable.*/
 
         template <typename T>
         static T* getPublisherOrInit(const std::string& topic)
@@ -73,28 +73,22 @@ class RosBlackBoard
         template <typename T>
         static T* getActionClientOrInit(const std::string& action)
         {
-            std::cout << "76" << std::endl;
             auto anyClient = _actionclients_bb->getAny(action);
-            std::cout << "78" << std::endl;
 
             /*Client doesnt exist yet. Create it. You should manage if the action server is ready from
             each BT node.*/
-            if(!anyClient)
+            if(!anyClient || anyClient->empty())
             {
-            std::cout << "84" << std::endl;
                 std::shared_ptr<T> client = std::make_shared<T>(action);
                 T* clientRawPTR = client.get();
                 _actionclients_bb->set(action, std::move(client));
-            std::cout << "88" << std::endl;
                 return clientRawPTR;
 
             }else{
                 /*Check type is ok before returning*/
-            std::cout << "93" << std::endl;
                 const std::type_info& info = typeid(std::shared_ptr<T>);
                 const std::type_info& gotType = anyClient->type();
 
-            std::cout << "97" << std::endl;
                 assert(info.hash_code() == gotType.hash_code());
                 /*Type is ok, so we can return the pointer*/
 

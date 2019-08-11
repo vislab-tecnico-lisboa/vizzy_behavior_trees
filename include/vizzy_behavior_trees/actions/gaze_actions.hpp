@@ -7,24 +7,19 @@
 #include <vizzy_msgs/GazeAction.h>
 #include <vizzy_msgs/GazeGoal.h>
 #include <vizzy_behavior_trees/conversions.hpp>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::GazeAction> GazeClient;
 
 
-class GazeActionBT : public BT::SyncActionNode
+class GazeActionBT : public BT::CoroActionNode
 {
     public:
 
-        /*This allows us to have multiple action names for
-        the same kind of actionlib action (i.e. MoveBaseAction for more than one robot)
-        and avoid creating duplicate action clients (i.e. using the same action in multiple
-        parts of the behavior_tree).*/
-
-        
-        std::shared_ptr<GazeClient> client_PTR;
+        GazeClient* client_PTR;
 
         GazeActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : SyncActionNode(name, config)
+            : CoroActionNode(name, config)
         {
             client_PTR = NULL;
         }
@@ -37,11 +32,11 @@ class GazeActionBT : public BT::SyncActionNode
         }
 
         BT::NodeStatus tick() override;
+        virtual void halt() override;
+        void cleanup(bool halted);
 
     private:
         std::atomic_bool _halt_requested;
-        static std::map<std::string, std::shared_ptr<GazeClient>> _gazeClients;
-        static std::map<std::string, bool> _gazeClientsInitializing;
 };
 
 

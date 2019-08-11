@@ -1,18 +1,18 @@
 #include <vizzy_behavior_trees/actions/gaze_actions.hpp>
 
 
-std::map<std::string, std::shared_ptr<GazeClient>> GazeActionBT::_gazeClients;
-std::map<std::string, bool> GazeActionBT::_gazeClientsInitializing;
-
-
 BT::NodeStatus GazeActionBT::tick()
 {
+
+    auto Now = [](){ return std::chrono::high_resolution_clock::now(); };
 
     vizzy_msgs::GazeGoal goal;
 
     BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("fixation_pose");
     BT::Optional<std::string> frame_id = getInput<std::string>("frame_id");
     BT::Optional<std::string> action_name = getInput<std::string>("action_name");
+
+
 
     if(!pose)
     {
@@ -30,56 +30,28 @@ BT::NodeStatus GazeActionBT::tick()
     }
 
 
+    if(client_PTR == NULL) { 
+        client_PTR = RosBlackBoard::getActionClientOrInit<GazeClient>("gaze");
+
+        ROS_INFO_STREAM("Waiting for action server of: gaze"); 
 
 
-    /*Check if the action client is registered in the moveBaseClient map
-    If it isn't register it. This allows us to have multiple actions for
-    the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
-    duplicate action clients.*/
+        TimePoint init_time = Now();
+        TimePoint timeout_time = Now()+std::chrono::milliseconds(5000);
 
-    if(client_PTR == NULL) 
-    {
-        auto action_client_pair = _gazeClients.find(action_name.value());
-        auto init_pair = _gazeClientsInitializing.find(action_name.value());
-
-        if(init_pair != _gazeClientsInitializing.end())
+        while(!client_PTR->isServerConnected())
         {
-            if(init_pair->second)
+
+            if(Now() > timeout_time)
             {
-                return BT::NodeStatus::FAILURE;
-            }
-        }
-
-
-        if(action_client_pair == _gazeClients.end())
-        {
-            //Create action client and add it to the list of all clients
-
-            client_PTR = std::make_shared<GazeClient>(action_name.value());
-
-            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-            _gazeClientsInitializing[action_name.value()] = true;
-
-            if(!client_PTR->waitForServer(ros::Duration(1)))
-            {
-                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-                _gazeClients.erase(action_name.value());
-                _gazeClientsInitializing.erase(action_name.value());
+                ROS_WARN_STREAM("Could not connect to action server: gaze");
                 return BT::NodeStatus::FAILURE;
             }
 
-            _gazeClientsInitializing[action_name.value()] = false;
-
-            ROS_INFO_STREAM("Found action server of: " << action_name.value());
-            _gazeClients[action_name.value()] = client_PTR;
-            ROS_INFO_STREAM("Number of gaze clients: " << _gazeClients.size());
-
-        }else
-        {
-            client_PTR = action_client_pair->second;
+            setStatusRunningAndYield();
         }
 
+        ROS_INFO_STREAM("Found action server of: gaze");
     }
 
     geometry_msgs::PoseStamped poseStamped = pose.value();
@@ -102,4 +74,20 @@ BT::NodeStatus GazeActionBT::tick()
 
     return BT::NodeStatus::SUCCESS;
 
+}
+
+void GazeActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
+
+    }
+
+}
+
+void GazeActionBT::halt()
+{
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    CoroActionNode::halt();
 }

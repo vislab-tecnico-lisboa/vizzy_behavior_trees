@@ -4,12 +4,10 @@
 #define MAX_REACH 0.6
 
 
-std::map<std::string, std::shared_ptr<CartesianClient>> CartesianActionBT::_cartesianClients;
-std::map<std::string, bool> CartesianActionBT::_cartesianClientsInitializing;
-
-
 BT::NodeStatus CartesianActionBT::tick()
 {
+
+    auto Now = [](){ return std::chrono::high_resolution_clock::now(); };
 
     vizzy_msgs::CartesianGoal goal;
 
@@ -37,56 +35,24 @@ BT::NodeStatus CartesianActionBT::tick()
                                 action_name.error() );
     }
 
-
-
-
-    /*This allows us to have multiple action names for
-    the same kind of actionlib action (i.e. CartesianAction for more than one robot)
-    and avoid creating duplicate action clients (i.e. using the same action in multiple
-    parts of the behavior_tree).*/
-
     if(client_PTR == NULL)
     {
-        auto action_client_pair = _cartesianClients.find(action_name.value());
-        auto init_pair = _cartesianClientsInitializing.find(action_name.value());
+        client_PTR = RosBlackBoard::getActionClientOrInit<CartesianClient>(action_name.value()); 
+        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value()); 
 
-        if(init_pair != _cartesianClientsInitializing.end())
+        TimePoint init_time = Now();
+        TimePoint timeout_time = Now()+std::chrono::milliseconds(1000);
+
+        while(!client_PTR->isServerConnected())
         {
-            if(init_pair->second)
-            {
-                return BT::NodeStatus::FAILURE;
-            }
-        }
-
-
-        if(action_client_pair == _cartesianClients.end())
-        {
-            //Create action client and add it to the list of all clients
-
-            client_PTR = std::make_shared<CartesianClient>(action_name.value());
-
-            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-            _cartesianClientsInitializing[action_name.value()] = true;
-
-            if(!client_PTR->waitForServer(ros::Duration(1)))
+            if(Now() > timeout_time)
             {
                 ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-                _cartesianClients.erase(action_name.value());
-                _cartesianClientsInitializing.erase(action_name.value());
                 return BT::NodeStatus::FAILURE;
             }
-
-            _cartesianClientsInitializing[action_name.value()] = false;
-
-            ROS_INFO_STREAM("Found action server of: " << action_name.value());
-            _cartesianClients[action_name.value()] = client_PTR;
-            ROS_INFO_STREAM("Number of cartesian clients: " << _cartesianClients.size());
-
-        }else
-        {
-            client_PTR = action_client_pair->second;
+            setStatusRunningAndYield();
         }
+        ROS_INFO_STREAM("Found action server of: " << action_name.value());
     }
 
     geometry_msgs::PoseStamped poseStamped = pose.value();
