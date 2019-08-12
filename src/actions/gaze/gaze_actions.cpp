@@ -31,27 +31,9 @@ BT::NodeStatus GazeActionBT::tick()
 
 
     if(client_PTR == NULL) { 
-        client_PTR = RosBlackBoard::getActionClientOrInit<GazeClient>("gaze");
-
-        ROS_INFO_STREAM("Waiting for action server of: gaze"); 
-
-
-        TimePoint init_time = Now();
-        TimePoint timeout_time = Now()+std::chrono::milliseconds(5000);
-
-        while(!client_PTR->isServerConnected())
-        {
-
-            if(Now() > timeout_time)
-            {
-                ROS_WARN_STREAM("Could not connect to action server: gaze");
-                return BT::NodeStatus::FAILURE;
-            }
-
-            setStatusRunningAndYield();
-        }
-
-        ROS_INFO_STREAM("Found action server of: gaze");
+        client_PTR = RosBlackBoard::getActionClientOrInit<GazeClient>(action_name.value(), this);
+        if(client_PTR == NULL)
+            return BT::NodeStatus::FAILURE;
     }
 
     geometry_msgs::PoseStamped poseStamped = pose.value();

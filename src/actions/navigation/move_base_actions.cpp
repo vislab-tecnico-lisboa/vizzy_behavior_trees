@@ -29,55 +29,11 @@ BT::NodeStatus MoveBaseActionBT::tick()
     }
 
 
-
-
-    /*Check if the action client is registered in the moveBaseClient map
-    If it isn't register it. This allows us to have multiple actions for
-    the same kind of actionlib (i.e. MoveBaseAction) and avoid creating
-    duplicate action clients.*/
-
-    if(client_PTR == NULL) 
-        {
-        auto action_client_pair = _moveBaseClients.find(action_name.value());
-        auto init_pair = _moveBaseClientsInitializing.find(action_name.value());
-
-        if(init_pair != _moveBaseClientsInitializing.end())
-        {
-            if(init_pair->second)
-            {
-                return BT::NodeStatus::FAILURE;
-            }
-        }
-
-
-        if(action_client_pair == _moveBaseClients.end())
-        {
-            //Create action client and add it to the list of all clients
-
-            client_PTR = std::make_shared<MoveBaseClient>(action_name.value());
-
-            ROS_INFO_STREAM("Waiting for action server of: " << action_name.value());
-
-            _moveBaseClientsInitializing[action_name.value()] = true;
-
-            if(!client_PTR->waitForServer(ros::Duration(1)))
-            {
-                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-                _moveBaseClients.erase(action_name.value());
-                _moveBaseClientsInitializing.erase(action_name.value());
-                return BT::NodeStatus::FAILURE;
-            }
-
-            _moveBaseClientsInitializing[action_name.value()] = false;
-
-            ROS_INFO_STREAM("Found action server of: " << action_name.value());
-            _moveBaseClients[action_name.value()] = client_PTR;
-            ROS_INFO_STREAM("Number of move_base clients: " << _moveBaseClients.size());
-
-        }else
-        {
-            client_PTR = action_client_pair->second;
-        }
+    if(client_PTR == NULL)
+    {
+        client_PTR = RosBlackBoard::getActionClientOrInit<MoveBaseClient>(action_name.value(), this);
+        if(client_PTR == NULL)
+            return BT::NodeStatus::FAILURE;
     }
 
 

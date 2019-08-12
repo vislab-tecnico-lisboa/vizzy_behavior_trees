@@ -12,6 +12,7 @@
 #include <vizzy_behavior_trees/util.hpp>
 #include <vizzy_behavior_trees/conversions.hpp>
 #include <map>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -26,7 +27,7 @@ class MoveBaseActionBT : public BT::CoroActionNode
         parts of the behavior_tree).*/
 
 
-        std::shared_ptr<MoveBaseClient> client_PTR;
+        MoveBaseClient* client_PTR;
 
 
         MoveBaseActionBT(const std::string& name, const BT::NodeConfiguration& config)

@@ -7,8 +7,6 @@
 BT::NodeStatus CartesianActionBT::tick()
 {
 
-    auto Now = [](){ return std::chrono::high_resolution_clock::now(); };
-
     vizzy_msgs::CartesianGoal goal;
 
     BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("pose");
@@ -37,22 +35,9 @@ BT::NodeStatus CartesianActionBT::tick()
 
     if(client_PTR == NULL)
     {
-        client_PTR = RosBlackBoard::getActionClientOrInit<CartesianClient>(action_name.value()); 
-        ROS_INFO_STREAM("Waiting for action server of: " << action_name.value()); 
-
-        TimePoint init_time = Now();
-        TimePoint timeout_time = Now()+std::chrono::milliseconds(1000);
-
-        while(!client_PTR->isServerConnected())
-        {
-            if(Now() > timeout_time)
-            {
-                ROS_WARN_STREAM("Could not connect to action server: " << action_name.value());
-                return BT::NodeStatus::FAILURE;
-            }
-            setStatusRunningAndYield();
-        }
-        ROS_INFO_STREAM("Found action server of: " << action_name.value());
+        client_PTR = RosBlackBoard::getActionClientOrInit<CartesianClient>(action_name.value(), this); 
+        if(client_PTR == NULL)
+            return BT::NodeStatus::FAILURE;
     }
 
     geometry_msgs::PoseStamped poseStamped = pose.value();

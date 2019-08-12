@@ -6,6 +6,7 @@
 #include <woz_dialog_msgs/SpeechAction.h>
 #include <woz_dialog_msgs/SpeechFeedback.h>
 #include <vizzy_behavior_trees/util.hpp>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 
 typedef actionlib::SimpleActionClient<woz_dialog_msgs::SpeechAction> SpeechClient;
@@ -14,8 +15,8 @@ class SpeechActionBT : public BT::CoroActionNode
 {
     public:
 
-        std::shared_ptr<SpeechClient> client_PTR;
-    
+        SpeechClient* client_PTR;
+
         SpeechActionBT(const std::string& name, const BT::NodeConfiguration& config)
             : CoroActionNode(name, config)
         {
@@ -35,8 +36,6 @@ class SpeechActionBT : public BT::CoroActionNode
         virtual void halt() override;
 
     private:
-        static std::map<std::string, std::shared_ptr<SpeechClient>> _speechClients;
-        static std::map<std::string, bool> _speechClientsInitializing;
         std::atomic_bool _halt_requested;
 };
 

@@ -12,6 +12,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 typedef actionlib::SimpleActionClient<vizzy_msgs::ChargeAction> ChargeClient;
 
@@ -25,7 +26,7 @@ class ChargeActionBT : public BT::CoroActionNode
         parts of the behavior_tree).*/
 
 
-        std::shared_ptr<ChargeClient> client_PTR;
+        ChargeClient* client_PTR;
 
 
         ChargeActionBT(const std::string& name, const BT::NodeConfiguration& config)

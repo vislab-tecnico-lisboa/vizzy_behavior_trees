@@ -1,6 +1,7 @@
 #ifndef ROSBT_BLACKBOARD_H_
 #define ROSBT_BLACKBOARD_H_
 #include <behaviortree_cpp/blackboard.h>
+#include <behaviortree_cpp/action_node.h>
 #include <typeinfo>
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -8,6 +9,7 @@
 
 
 using namespace BT;
+
 
 
 /*The purpose of this class is to avoid the creation of
@@ -18,6 +20,10 @@ can be shared among all tree nodes.*/
 class RosBlackBoard
 {
     public:
+
+        static BT::TimePoint Now(){
+        return std::chrono::high_resolution_clock::now();
+        }
 
         static BT::Any* getAnyPublisher(std::string& key)
         {
@@ -95,19 +101,18 @@ class RosBlackBoard
         }
 
         template <typename T>
-        static T* getActionClientOrInit(const std::string& action)
+        static T* getActionClientOrInit(const std::string& action, CoroActionNode *btnode)
         {
             auto anyClient = _actionclients_bb->getAny(action);
+            T* clientRawPTR;
 
             /*Client doesnt exist yet. Create it. You should manage if the action server is ready from
             each BT node.*/
             if(!anyClient || anyClient->empty())
             {
                 std::shared_ptr<T> client = std::make_shared<T>(action);
-                T* clientRawPTR = client.get();
+                clientRawPTR = client.get();
                 _actionclients_bb->set(action, std::move(client));
-                return clientRawPTR;
-
             }else{
                 /*Check type is ok before returning*/
                 const std::type_info& info = typeid(std::shared_ptr<T>);
@@ -116,8 +121,29 @@ class RosBlackBoard
                 assert(info.hash_code() == gotType.hash_code());
                 /*Type is ok, so we can return the pointer*/
 
-                return anyClient->cast<std::shared_ptr<T> >().get();
+                clientRawPTR = anyClient->cast<std::shared_ptr<T> >().get();
             }
+
+
+            ROS_INFO_STREAM("Waiting for action server of: " << action); 
+
+            TimePoint init_time = Now();
+            TimePoint timeout_time = Now()+std::chrono::milliseconds(5000);
+
+            while(!clientRawPTR->isServerConnected())
+            {
+                if(Now() > timeout_time)
+                {
+                    ROS_WARN_STREAM("Could not connect to action server: " << action);
+                    return NULL;
+                }
+
+            btnode->setStatusRunningAndYield();
+            }
+
+            ROS_INFO_STREAM("Found action server of: " << action);
+
+            return clientRawPTR;
         }
 
     private:
