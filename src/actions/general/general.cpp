@@ -21,7 +21,7 @@ BT::NodeStatus DebugAction::tick()
 //WaitForXSeconds
 BT::NodeStatus WaitForXSeconds::tick()
 {
-    double time_d;
+    int time_d;
 
     BT::Optional<std::string> time = getInput<std::string>("seconds");
     BT::Optional<std::string> result = getInput<std::string>("result");
@@ -40,20 +40,17 @@ BT::NodeStatus WaitForXSeconds::tick()
 
     double current = 0;
 
-    time_d = std::atof(time.value().c_str());
+    time_d = std::atof(time.value().c_str())*1000;
 
-    setStatus(BT::NodeStatus::RUNNING);
 
-    while(current<time_d)
+    TimePoint initial_time = RosBlackBoard::Now();
+    TimePoint timeout = initial_time + std::chrono::milliseconds(time_d);
+
+    while(RosBlackBoard::Now() < timeout)
     {
-        SleepMS(10);
-        current+=0.01;
-        if(_halt_requested)
-        {
-            std::cout << "Halt requested!" << std::endl;
-            return BT::NodeStatus::FAILURE;
-        }
+        setStatusRunningAndYield();
     }
+
 
     if(result.value() == "SUCCESS")
     {
@@ -64,7 +61,17 @@ BT::NodeStatus WaitForXSeconds::tick()
 
 }
 
+void WaitForXSeconds::cleanup(bool halted)
+{
+    if(halted)
+    {
+        //Preempt all actions here
+
+    }
+}
+
 void WaitForXSeconds::halt()
 {
-    _halt_requested.store(true);
+    cleanup(true);
+    CoroActionNode::halt();
 }

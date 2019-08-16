@@ -28,14 +28,12 @@ BT::NodeStatus MoveBaseActionBT::tick()
                                 action_name.error() );
     }
 
-
     if(client_PTR == NULL)
     {
         client_PTR = RosBlackBoard::getActionClientOrInit<MoveBaseClient>(action_name.value(), this);
         if(client_PTR == NULL)
             return BT::NodeStatus::FAILURE;
     }
-
 
     goal.target_pose = pose.value();
     goal.target_pose.header.frame_id = frame_id.value();

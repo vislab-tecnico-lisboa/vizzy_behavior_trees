@@ -3,6 +3,7 @@
 
 #include <behaviortree_cpp/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 class DebugAction : public BT::AsyncActionNode
 {
@@ -24,11 +25,11 @@ class DebugAction : public BT::AsyncActionNode
         std::atomic_bool _halt_requested;
 };
 
-class WaitForXSeconds : public BT::AsyncActionNode
+class WaitForXSeconds : public BT::CoroActionNode
 {
     public:
         WaitForXSeconds(const std::string& name, const BT::NodeConfiguration& config)
-        : AsyncActionNode(name, config)
+        : CoroActionNode(name, config)
         {}
 
         static BT::PortsList providedPorts()
@@ -39,6 +40,7 @@ class WaitForXSeconds : public BT::AsyncActionNode
 
 
         BT::NodeStatus tick() override;
+        void cleanup(bool halted);
         virtual void halt() override;
 
     private:
