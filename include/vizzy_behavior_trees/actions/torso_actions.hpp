@@ -5,6 +5,7 @@
 #include <std_msgs/Float64.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <ros/ros.h>
+#include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
 using namespace BT;
 
@@ -14,6 +15,8 @@ class TorsoRoutineBT : public BT::SyncActionNode
         TorsoRoutineBT(const std::string& name, const BT::NodeConfiguration& config);
 
         double last_ang;
+
+        TimePoint last_time;
 
         static BT::PortsList providedPorts()
         {

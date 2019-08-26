@@ -7,8 +7,8 @@ TorsoRoutineBT::TorsoRoutineBT(const std::string& name, const NodeConfiguration&
     : SyncActionNode(name, config), nh_(), last_ang(-1000)
 {
 
-
-
+    
+    last_time = RosBlackBoard::Now();
 
 }
 
@@ -17,6 +17,7 @@ BT::NodeStatus TorsoRoutineBT::tick()
 
     BT::Optional<std::string> topic = getInput<std::string>("topic");
     BT::Optional<double> angle = getInput<double>("angle");
+
 
 
     if(!topic)
@@ -30,6 +31,13 @@ BT::NodeStatus TorsoRoutineBT::tick()
     }
 
     double ang_val = angle.value()*M_PI/180;
+
+    TimePoint timeout = last_time + std::chrono::milliseconds(1000);
+    
+    if(RosBlackBoard::Now() > timeout)
+    {
+        last_ang = -1000;
+    }
 
     if(ang_val == last_ang)
     {
