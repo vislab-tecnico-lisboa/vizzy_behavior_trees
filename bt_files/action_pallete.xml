@@ -1,14 +1,5 @@
 <root>
     <TreeNodesModel>
-        <Action ID="SelectFieldFromPoseStamped">
-            <input_port name="field"/>
-            <input_port name="pose_stamped"/>
-            <output_port name="output_val"/>
-        </Action>
-        <Action ID="MoveTorso">
-            <input_port name="topic"/>
-            <input_port name="angle"/>
-        </Action>
         <Action ID="ArmCartesian">
             <input_port name="action_name"/>
             <input_port name="frame_id"/>
@@ -23,7 +14,6 @@
             <input_port name="action"/>
             <input_port name="action_name"/>
         </Action>
-        <SubTree ID="ChargeST"/>
         <Action ID="CheckBattery">
             <output_port type="int" name="battery_state"/>
             <output_port type="double" name="percentage"/>
@@ -46,15 +36,14 @@
             <input_port name="B"/>
             <input_port name="Condition"/>
         </Condition>
-        <Action ID="DetectBlocks">
-            <output_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <input_port type="std::string" name="block_topic"/>
+        <Action ID="DebugAction">
+            <input_port type="std::string" name="string"/>
         </Action>
+        <Action ID="Destroy"/>
         <Action ID="DetectFaces">
             <output_port name="faceListOut"/>
             <input_port name="face_topic"/>
         </Action>
-        <SubTree ID="ErrorGameState"/>
         <Action ID="FaceCounter">
             <input_port name="faceListIn"/>
             <input_port name="number_faces"/>
@@ -64,6 +53,10 @@
             <input_port name="fixation_pose"/>
             <input_port name="frame_id"/>
         </Action>
+        <Action ID="GetFloat64">
+            <output_port type="double" name="number"/>
+            <input_port type="std::string" name="topic"/>
+        </Action>
         <Action ID="GetInt16">
             <output_port name="number"/>
             <input_port name="topic"/>
@@ -72,20 +65,41 @@
             <output_port name="pose_array"/>
             <input_port name="topic"/>
         </Action>
+        <Action ID="GiveFeedback">
+            <input_port default="850" name="almost_thr"/>
+            <input_port name="correct_blocks"/>
+            <input_port name="incorrect_blocks"/>
+            <input_port default="0" name="personality"/>
+            <input_port name="score"/>
+        </Action>
         <Action ID="MoveBase">
             <input_port name="action_name"/>
             <input_port name="frame_id"/>
             <input_port name="goal_pose"/>
         </Action>
+        <Action ID="MoveTorso">
+            <input_port name="angle"/>
+            <input_port name="topic"/>
+        </Action>
+        <Action ID="ResetVars"/>
         <Action ID="SelectBlock">
             <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
             <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
             <input_port type="std::string" name="position_in_list"/>
         </Action>
+        <Action ID="SelectFieldFromPoseStamped">
+            <input_port name="field"/>
+            <output_port name="output_val"/>
+            <input_port name="pose_stamped"/>
+        </Action>
         <Action ID="SelectPoseStamped">
             <input_port name="pose_array"/>
             <output_port name="pose_stamped"/>
             <input_port name="position_in_list"/>
+        </Action>
+        <Action ID="SenseScore">
+            <output_port name="score"/>
+            <input_port name="score_topic"/>
         </Action>
         <Action ID="Speak">
             <input_port type="std::string" name="action_name"/>
@@ -94,8 +108,8 @@
             <input_port type="std::string" name="voice"/>
         </Action>
         <Action ID="WaitForXSeconds">
-            <input_port name="result" default="SUCCESS">Result after specified time: SUCCESS or FAILURE</input_port>
-            <input_port name="seconds" default="5">Time in seconds</input_port>
+            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
+            <input_port default="5" name="seconds">Time in seconds</input_port>
         </Action>
     </TreeNodesModel>
 </root>
