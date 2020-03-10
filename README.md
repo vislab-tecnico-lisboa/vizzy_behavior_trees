@@ -4,5 +4,5 @@
     
 Clone the following repos to catkin_ws/src:
 
-    https://github.com/BehaviorTree/BehaviorTree.CPP
-    https://github.com/BehaviorTree/Groot    
+    https://github.com/joao-avelino/Groot
+    https://github.com/joao-avelino/BehaviorTree.CPP    
