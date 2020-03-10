@@ -1,11 +1,11 @@
 #ifndef ROSBT_BLACKBOARD_H_
 #define ROSBT_BLACKBOARD_H_
-#include <behaviortree_cpp/blackboard.h>
-#include <behaviortree_cpp/action_node.h>
+#include <behaviortree_cpp_v3/blackboard.h>
+#include <behaviortree_cpp_v3/action_node.h>
 #include <typeinfo>
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
-#include <behaviortree_cpp/basic_types.h>
+#include <behaviortree_cpp_v3/basic_types.h>
 
 
 using namespace BT;

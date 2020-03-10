@@ -1,7 +1,7 @@
 #ifndef GENERAL_ACTIONS_BT_HPP_
 #define GENERAL_ACTIONS_BT_HPP_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 

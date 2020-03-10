@@ -1,7 +1,7 @@
 #ifndef GET_STD_MSGS_HPP_
 #define GET_STD_MSGS_HPP_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <ros/ros.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float64.h>

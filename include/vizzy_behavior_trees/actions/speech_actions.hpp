@@ -1,6 +1,6 @@
 #ifndef SPEECH_ACTIONS_BT_H_
 #define SPEECH_ACTIONS_BT_H_
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <actionlib/client/simple_action_client.h>
 #include <woz_dialog_msgs/SpeechGoal.h>
 #include <woz_dialog_msgs/SpeechAction.h>

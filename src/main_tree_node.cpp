@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include <behaviortree_cpp/bt_factory.h>
+#include <behaviortree_cpp_v3/bt_factory.h>
 #include <sstream>
 #include <ros/package.h>
 
@@ -19,7 +19,7 @@
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
 
 //Fancy logging for Groot
-#include "behaviortree_cpp/loggers/bt_zmq_publisher.h"
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 
 int main(int argc, char **argv)

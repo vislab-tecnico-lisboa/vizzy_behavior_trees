@@ -1,7 +1,7 @@
 #ifndef MOVE_BASE_ACTIONS_BT_H_
 #define MOVE_BASE_ACTIONS_BT_H_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <actionlib/client/simple_action_client.h>
 #include "geometry_msgs/PoseStamped.h"
 #include <move_base_msgs/MoveBaseAction.h>

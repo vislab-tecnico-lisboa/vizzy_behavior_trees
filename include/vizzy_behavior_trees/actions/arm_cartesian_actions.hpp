@@ -1,7 +1,7 @@
 #ifndef ARM_CARTESIAN_ACTIONS_BT_HPP_
 #define ARM_CARTESIAN_ACTIONS_BT_HPP_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <actionlib/client/simple_action_client.h>
 #include "geometry_msgs/PoseStamped.h"
 #include <vizzy_msgs/CartesianAction.h>

@@ -1,7 +1,7 @@
 #ifndef TORSO_ACTIONS_HPP_
 #define TORSO_ACTIONS_HPP_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <std_msgs/Float64.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <ros/ros.h>

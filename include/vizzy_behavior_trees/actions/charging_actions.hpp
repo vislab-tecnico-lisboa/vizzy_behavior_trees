@@ -10,7 +10,7 @@
 #include <vizzy_msgs/BatteryChargingStateRequest.h>
 #include <vizzy_msgs/BatteryChargingStateResponse.h>
 #include <actionlib/client/simple_action_client.h>
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 

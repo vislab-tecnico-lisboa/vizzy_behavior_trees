@@ -1,6 +1,6 @@
 #ifndef GENERAL_CONDITIONS_HPP_
 #define GENERAL_CONDITIONS_HPP_
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 
 class CompareInt : public BT::ConditionNode
 {

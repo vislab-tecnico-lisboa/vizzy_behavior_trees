@@ -1,7 +1,7 @@
 #ifndef ARM_ROUTINES_BT_HPP_
 #define ARM_ROUTINES_BT_HPP_
 
-#include <behaviortree_cpp/behavior_tree.h>
+#include <behaviortree_cpp_v3/behavior_tree.h>
 #include <std_msgs/Int16.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <ros/ros.h>
