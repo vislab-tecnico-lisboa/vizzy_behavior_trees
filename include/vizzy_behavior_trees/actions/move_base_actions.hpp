@@ -33,7 +33,7 @@ class MoveBaseActionBT : public BT::CoroActionNode
         MoveBaseActionBT(const std::string& name, const BT::NodeConfiguration& config)
             : CoroActionNode(name, config)
         {
-            client_PTR == NULL;
+            client_PTR = NULL;
         }
 
         static BT::PortsList providedPorts()
