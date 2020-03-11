@@ -3,7 +3,7 @@
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
             <Action pose_array="poses" topic="poses" ID="GetPoseArray"/>
-            <Action pose_array="{poses}" pose_stamped="pose" position_in_list="0" ID="SelectPoseStamped"/>
+            <Action pose_array="{poses}" pose_stamped="pose" position_in_list="0" ID="SelectPose"/>
             <Action type="CARTESIAN" action_name="/vizzy/right_arm_cartesian_controller/cartesian_action" frame_id="base_footprint" pose="{pose}" ID="ArmCartesian"/>
         </Sequence>
     </BehaviorTree>
@@ -82,7 +82,7 @@
             <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
             <input_port type="std::string" name="position_in_list"/>
         </Action>
-        <Action ID="SelectPoseStamped">
+        <Action ID="SelectPose">
             <input_port name="pose_array"/>
             <output_port name="pose_stamped"/>
             <input_port name="position_in_list"/>

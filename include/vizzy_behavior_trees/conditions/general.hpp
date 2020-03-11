@@ -57,5 +57,4 @@ class CheckBool : public BT::ConditionNode
 
 };
 
-
 #endif

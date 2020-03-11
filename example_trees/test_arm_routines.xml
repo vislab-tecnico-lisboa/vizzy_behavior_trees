@@ -4,7 +4,7 @@
         <Fallback>
             <Sequence>
                 <Action pose_array="face_array" topic="faces" ID="GetPoseArray" name="GetFaceList"/>
-                <Action pose_array="{face_array}" ID="SelectPoseStamped" pose_stamped="face" position_in_list="0"/>
+                <Action pose_array="{face_array}" ID="SelectPose" pose_stamped="face" position_in_list="0"/>
                 <Parallel threshold="2">
                     <Action ID="GazeAtTarget" fixation_pose="{face}" frame_id="base_footprint" action_name="gaze"/>
                     <Fallback>
@@ -115,7 +115,7 @@
             <output_port name="output_val"/>
             <input_port name="pose_stamped"/>
         </Action>
-        <Action ID="SelectPoseStamped">
+        <Action ID="SelectPose">
             <input_port name="pose_array"/>
             <output_port name="pose_stamped"/>
             <input_port name="position_in_list"/>

@@ -1,12 +1,25 @@
 #include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
+#include <cmath>
+
+bool comparePoseStamped(geometry_msgs::Pose i, geometry_msgs::Pose j)
+{ 
+
+    double n1 = std::sqrt(std::pow(i.position.x, 2) + std::pow(i.position.y, 2) + std::pow(i.position.z, 2));
+    double n2 = std::sqrt(std::pow(j.position.x, 2) + std::pow(j.position.y, 2) + std::pow(j.position.z, 2));
+
+    return (n1<n2); 
+}
 
 
 //PoseArray
-
 void GetPoseArrayBT::callback(const geometry_msgs::PoseArray::ConstPtr &msg)
 {
+    //Organize array based on its norm, from smaller to bigger
     this->poseList.header = msg->header;
     this->poseList.poses = msg->poses;
+
+    std::sort (this->poseList.poses.begin(), this->poseList.poses.end(), comparePoseStamped);
+
 }
 
 
@@ -50,7 +63,7 @@ BT::NodeStatus GetPoseArrayBT::tick()
 }
 
 //PoseStamped
-NodeStatus SelectPoseStamped::tick()
+NodeStatus SelectPose::tick()
 {
 
     BT::Optional<geometry_msgs::PoseArray> poses = getInput<geometry_msgs::PoseArray>("pose_array");

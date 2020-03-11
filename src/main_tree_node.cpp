@@ -44,19 +44,22 @@ int main(int argc, char **argv)
   factory.registerNodeType<CheckBatteryBT>("CheckBattery");
   factory.registerNodeType<GetInt16BT>("GetInt16");
   factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
-  factory.registerNodeType<SelectPoseStamped>("SelectPoseStamped");
+  factory.registerNodeType<SelectPose>("SelectPose");
   factory.registerNodeType<GazeActionBT>("GazeAtTarget");
   factory.registerNodeType<SelectFieldFromPoseStamped>("SelectFieldFromPoseStamped");
   factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
   factory.registerNodeType<DebugAction>("DebugAction");
+  factory.registerNodeType<GetFloat64BT>("GetFloat64");
 
   std::string xmlPath;
+  double rate;
   nPriv.param<std::string>("bt_xml", xmlPath, "");
+  nPriv.param<double>("loop_rate", rate, 30);
   auto tree = factory.createTreeFromFile(xmlPath);
   BT::PublisherZMQ publisher_zmq(tree);
 
 
-  ros::Rate loop_rate(30);
+  ros::Rate loop_rate(rate);
 
   while (ros::ok())
   {

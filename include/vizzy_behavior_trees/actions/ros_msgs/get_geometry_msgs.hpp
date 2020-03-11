@@ -36,14 +36,14 @@ class GetPoseArrayBT : public SyncActionNode
 };
 
 
-//SelectPoseStamped from a PoseArray
-class SelectPoseStamped : public SyncActionNode
+//SelectPose from a PoseArray
+class SelectPose : public SyncActionNode
 {
 
     public:
         geometry_msgs::PoseStamped pose;
 
-        SelectPoseStamped(const std::string& string, const NodeConfiguration& config)
+        SelectPose(const std::string& string, const NodeConfiguration& config)
         : SyncActionNode(string, config){}
 
 
