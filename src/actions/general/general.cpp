@@ -1,6 +1,51 @@
 #include <vizzy_behavior_trees/actions/general.hpp>
 
 
+BT::NodeStatus TimerAction::tick()
+{
+    int time_d;
+
+    BT::Optional<std::string> time = getInput<std::string>("s_between_success");
+
+    if(!time)
+    {
+        throw BT::RuntimeError("missing required inputs [ms_between_success]: ",
+                                   time.error() );
+    }
+
+    time_d = std::atof(time.value().c_str())*1000;
+
+
+    if(first_time)
+    {
+        first_time = false;
+        TimePoint initial_time = RosBlackBoard::Now();
+        timeout = initial_time + std::chrono::milliseconds(time_d);
+        previous_time_d = time_d;
+
+        return BT::NodeStatus::SUCCESS;
+    }
+
+    if(previous_time_d != time_d)
+    {
+        TimePoint initial_time = RosBlackBoard::Now();
+        timeout = initial_time + std::chrono::milliseconds(time_d);
+        previous_time_d = time_d;
+    }
+
+    if(RosBlackBoard::Now() < timeout)
+    {
+        return BT::NodeStatus::FAILURE;
+
+    }else{
+
+        TimePoint initial_time = RosBlackBoard::Now();
+        timeout = initial_time + std::chrono::milliseconds(time_d);
+        return BT::NodeStatus::SUCCESS;
+    }
+
+}
+
 BT::NodeStatus DebugAction::tick()
 {
     BT::Optional<std::string> toPrint = getInput<std::string>("string");

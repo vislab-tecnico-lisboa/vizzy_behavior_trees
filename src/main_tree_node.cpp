@@ -22,6 +22,10 @@
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
 
+#include "xmlrpcpp/XmlRpcException.h"
+#include <xmlrpcpp/XmlRpcValue.h>
+
+
 int main(int argc, char **argv)
 {
 
@@ -50,6 +54,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
   factory.registerNodeType<DebugAction>("DebugAction");
   factory.registerNodeType<GetFloat64BT>("GetFloat64");
+  factory.registerNodeType<TimerAction>("TimerAction");
 
   std::string xmlPath;
   double rate;
@@ -58,8 +63,41 @@ int main(int argc, char **argv)
   auto tree = factory.createTreeFromFile(xmlPath);
   BT::PublisherZMQ publisher_zmq(tree);
 
-
   ros::Rate loop_rate(rate);
+
+  XmlRpc::XmlRpcValue vars_list;
+  std::vector<std::string> vars;
+
+  /*Initialize variables from file*/
+  /*Thanks to this rosanswer: https://answers.ros.org/question/189299/getting-hierarchy-level-of-yaml-parameter/ */
+  /*Not a straightforward library...*/
+
+  if (nPriv.getParam("bt_vars", vars_list))
+  {
+    std::map<std::string, XmlRpc::XmlRpcValue>::iterator i;
+    ROS_ASSERT(vars_list.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+
+    for(auto it : vars_list)
+    {
+
+      std::string var_name;
+      std::string var_value;
+
+      var_name = it.first;
+      var_value = std::string(vars_list[it.first]);
+
+      tree.rootBlackboard()->set(var_name, var_value);
+
+      for(auto bb : tree.blackboard_stack)
+      {
+        bb->addSubtreeRemapping(var_name, var_name);
+      }
+    
+    }
+
+  }
+
+
 
   while (ros::ok())
   {
