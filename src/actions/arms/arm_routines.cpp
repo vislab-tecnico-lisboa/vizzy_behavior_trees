@@ -57,6 +57,33 @@ BT::NodeStatus ArmRoutineBT::tick()
     }else if(gest == "HANDSHAKE_PID")
     {
         command.data = 5;
+    }else if(gest == "ARMS_DOWN")
+    {
+        command.data = 6;
+    }else if(gest == "HAPPY_EMOTIONLESS")
+    {
+        command.data = 7;
+    }else if(gest == "HAPPY_EMOTIVE")
+    {
+        command.data = 8;
+    }else if(gest == "SAD")
+    {
+        command.data = 9;
+    }else if(gest == "ANGRY")
+    {
+        command.data = 10;
+    }else if(gest == "FEAR")
+    {
+        command.data = 11;
+    }else if(gest == "SURPRISE")
+    {
+        command.data = 13;
+    }else if(gest == "STRETCH_OPEN")
+    {
+        command.data = 14;
+    }else if(gest == "SURPRISE_OPEN")
+    {
+        command.data = 15;
     }else{
         return BT::NodeStatus::FAILURE;
     }
