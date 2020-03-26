@@ -22,6 +22,15 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
 )
 
+add_action_files(
+  DIRECTORY action
+  FILES general.action
+)
+
+generate_messages(
+  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
+)
+
 
 ###################################
 ## catkin specific configuration ##
@@ -49,6 +58,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+
 
 ## Declare a C++ library
 add_library(vizzy_actions STATIC
