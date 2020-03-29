@@ -4,6 +4,41 @@
 #include <behaviortree_cpp_v3/behavior_tree.h>
 #include <vizzy_behavior_trees/util.hpp>
 #include <vizzy_behavior_trees/rosbt_blackboard.hpp>
+#include <vizzy_behavior_trees/GeneralAction.h>
+#include <vizzy_behavior_trees/GeneralGoal.h>
+#include <actionlib/client/simple_action_client.h>
+
+
+typedef actionlib::SimpleActionClient<vizzy_behavior_trees::GeneralAction> GeneralActionClient;
+
+
+class GeneralActionBT : public BT::CoroActionNode
+{
+    public:
+
+        GeneralActionClient* client_PTR;
+
+        GeneralActionBT(const std::string& name, const BT::NodeConfiguration& config)
+            : CoroActionNode(name, config)
+        {
+            client_PTR = NULL;
+        }
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("constants"),
+                   BT::OutputPort<std::string>("result"),
+                   BT::InputPort<std::string>("variables"),
+                   BT::InputPort<std::string>("action_name")};
+        }
+
+        BT::NodeStatus tick() override;
+        virtual void halt() override;
+        void cleanup(bool halted);
+
+    private:
+        std::atomic_bool _halt_requested;
+};
 
 class DebugAction : public BT::AsyncActionNode
 {

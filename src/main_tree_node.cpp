@@ -55,6 +55,7 @@ int main(int argc, char **argv)
   factory.registerNodeType<DebugAction>("DebugAction");
   factory.registerNodeType<GetFloat64BT>("GetFloat64");
   factory.registerNodeType<TimerAction>("TimerAction");
+  factory.registerNodeType<GeneralActionBT>("GeneralActionlib");
 
   std::string xmlPath;
   double rate;

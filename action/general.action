@@ -1,8 +1,0 @@
-#goal definition
-int32 goal
----
-#result definition
-int32[] result
----
-#feedback
-int32[] percentage

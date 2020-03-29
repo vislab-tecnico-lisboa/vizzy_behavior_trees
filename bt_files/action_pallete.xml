@@ -15,16 +15,16 @@
             <input_port name="action_name"/>
         </Action>
         <Action ID="CheckBattery">
-            <output_port name="battery_state" type="int"/>
-            <output_port name="percentage" type="double"/>
-            <input_port name="service_name" type="std::string"/>
+            <output_port type="int" name="battery_state"/>
+            <output_port type="double" name="percentage"/>
+            <input_port type="std::string" name="service_name"/>
         </Action>
         <Condition ID="CheckBool">
             <input_port name="variable"/>
         </Condition>
         <Action ID="CheckCharging">
-            <output_port name="charging_state" type="int"/>
-            <input_port name="service_name" type="std::string"/>
+            <output_port type="int" name="charging_state"/>
+            <input_port type="std::string" name="service_name"/>
         </Action>
         <Condition ID="CompareDouble">
             <input_port name="A"/>
@@ -37,7 +37,7 @@
             <input_port name="Condition"/>
         </Condition>
         <Action ID="DebugAction">
-            <input_port name="string" type="std::string"/>
+            <input_port type="std::string" name="string"/>
         </Action>
         <Action ID="Destroy"/>
         <Action ID="DetectFaces">
@@ -53,17 +53,23 @@
             <input_port name="fixation_pose"/>
             <input_port name="frame_id"/>
         </Action>
+        <Action ID="GeneralActionlib">
+            <input_port name="action_name"/>
+            <input_port name="constants">A coma separated list of constants.</input_port>
+            <output_port name="result">This is a string</output_port>
+            <input_port name="variables">A coma separated list of variables.</input_port>
+        </Action>
         <Action ID="GetFloat64">
-            <output_port name="number" type="double"/>
-            <input_port name="topic" type="std::string"/>
+            <output_port type="double" name="number"/>
+            <input_port type="std::string" name="topic"/>
         </Action>
         <Action ID="GetInt16">
             <output_port name="number"/>
             <input_port name="topic"/>
         </Action>
         <Action ID="GetPoseArray">
-            <inout_port name="pose_array"/>
-            <inout_port name="topic"/>
+            <input_port name="pose_array"/>
+            <input_port name="topic"/>
         </Action>
         <Action ID="GiveFeedback">
             <input_port name="almost_thr" default="850"/>
@@ -73,9 +79,9 @@
             <input_port name="score"/>
         </Action>
         <Action ID="MoveBase">
-            <inout_port name="action_name"/>
-            <inout_port name="frame_id"/>
-            <inout_port name="goal_pose"/>
+            <input_port name="action_name"/>
+            <input_port name="frame_id"/>
+            <input_port name="goal_pose"/>
         </Action>
         <Action ID="MoveTorso">
             <input_port name="angle"/>
@@ -83,9 +89,9 @@
         </Action>
         <Action ID="ResetVars"/>
         <Action ID="SelectBlock">
-            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
-            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
-            <input_port name="position_in_list" type="std::string"/>
+            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
+            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
+            <input_port type="std::string" name="position_in_list"/>
         </Action>
         <Action ID="SelectFieldFromPoseStamped">
             <input_port name="field"/>
@@ -93,19 +99,19 @@
             <input_port name="pose_stamped"/>
         </Action>
         <Action ID="SelectPose">
-            <inout_port name="pose_array"/>
-            <inout_port name="pose_stamped"/>
-            <inout_port name="position_in_list"/>
+            <input_port name="pose_array"/>
+            <input_port name="pose_stamped"/>
+            <input_port name="position_in_list"/>
         </Action>
         <Action ID="SenseScore">
             <output_port name="score"/>
             <input_port name="score_topic"/>
         </Action>
         <Action ID="Speak">
-            <inout_port name="action_name"/>
-            <inout_port name="language"/>
-            <inout_port name="utterance"/>
-            <inout_port name="voice"/>
+            <input_port name="action_name"/>
+            <input_port name="language"/>
+            <input_port name="utterance"/>
+            <input_port name="voice"/>
         </Action>
         <Action ID="TimerAction">
             <input_port name="s_between_success">Time (s) before this node returns SUCCESS. It will return FAILURE in the meanwhile</input_port>

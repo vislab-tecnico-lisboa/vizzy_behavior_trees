@@ -1,6 +1,172 @@
 #include <vizzy_behavior_trees/actions/general.hpp>
 
 
+BT::NodeStatus GeneralActionBT::tick()
+{
+
+    auto Now = [](){ return std::chrono::high_resolution_clock::now(); };
+
+    vizzy_behavior_trees::GeneralGoal goal;
+
+    BT::Optional<std::string> action_name = getInput<std::string>("action_name");
+    BT::Optional<std::string> constants = getInput<std::string>("constants");
+    BT::Optional<std::string> variables = getInput<std::string>("variables");
+    BT::Optional<std::string> result = getInput<std::string>("result");
+
+    auto conf = config();
+
+    std::string constants_string =  constants.value();
+
+    //Remove spaces from string
+    constants_string.erase(remove_if(constants_string.begin(), constants_string.end(), isspace), constants_string.end());
+
+    size_t pos = 0;
+    std::string token;
+    std::string delimiter(",");
+
+    if(constants_string.length() > 0)
+    {
+        while ((pos = constants_string.find(delimiter)) != std::string::npos) {
+            token = constants_string.substr(0, pos);
+            goal.constants.push_back(token);
+            constants_string.erase(0, pos + delimiter.length());
+        
+        }
+        goal.constants.push_back(constants_string);
+    }
+
+
+    std::string varsname_string = variables.value();
+    std::vector<std::string> varsname_list;
+
+    //Remove spaces from string
+    varsname_string.erase(remove_if(varsname_string.begin(), varsname_string.end(), isspace), varsname_string.end());
+
+    pos = 0;
+    if(varsname_string.length() > 0)
+    {
+        while ((pos = varsname_string.find(delimiter)) != std::string::npos) {
+            token = varsname_string.substr(0, pos);
+            varsname_list.push_back(token);
+            varsname_string.erase(0, pos + delimiter.length());
+        
+        }
+        varsname_list.push_back(varsname_string);
+    }
+
+
+
+    for(auto varname : varsname_list)
+    {
+
+        std::string vstr;
+
+        auto anyVar = conf.blackboard->getAny(varname);
+
+        if(!anyVar || anyVar->empty())
+        {
+            ROS_WARN_STREAM("[BT " << this->name() << "]: Cannot find variable " << varname << ". Check your BT");
+            return BT::NodeStatus::FAILURE;
+        }
+
+        if(anyVar->isNumber())
+        {
+            if(anyVar->type() ==  typeid(int64_t))
+            {
+                std::stringstream ss;
+                ss << anyVar->cast<int64_t>();
+                vstr = ss.str();
+
+            }else if(anyVar->type() ==  typeid(uint64_t))
+            {
+                std::stringstream ss;
+                ss << anyVar->cast<uint64_t>();
+                vstr = ss.str();
+
+            }else if(anyVar->type() == typeid(double))
+            {
+                std::stringstream ss;
+                ss << anyVar->cast<double>();
+                vstr = ss.str();
+            }
+
+        }else if(anyVar->isString())
+        {
+            vstr = anyVar->cast<SafeAny::SimpleString>().toStdString();
+
+        }else{
+
+            ROS_WARN_STREAM("[BT " << this->name() << "]: variable " << varname << "is neither number \
+            or string. This node cannot process it :(");
+            return BT::NodeStatus::FAILURE;
+
+        }
+
+        goal.variables.push_back(vstr);
+
+    }
+
+    if (!action_name)
+    {
+        throw BT::RuntimeError("missing required inputs [action_name]: ",
+                                action_name.error() );
+    }
+
+
+    if(client_PTR == NULL) { 
+        client_PTR = RosBlackBoard::getActionClientOrInit<GeneralActionClient>(action_name.value(), this);
+        if(client_PTR == NULL)
+            return BT::NodeStatus::FAILURE;
+    }
+
+
+    client_PTR->isServerConnected();
+    client_PTR->sendGoal(goal);
+
+    auto state = client_PTR->getState();
+
+
+    while(!state.isDone())
+    {
+        state = client_PTR->getState();
+        setStatusRunningAndYield();
+    }
+
+    cleanup(false);
+
+    if(client_PTR->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        auto action_result = client_PTR->getResult();
+        auto result = setOutput("result", action_result->result);
+        
+        return BT::NodeStatus::SUCCESS;
+    }else{
+        return BT::NodeStatus::FAILURE;
+    }
+
+
+    return BT::NodeStatus::SUCCESS;
+
+}
+
+void GeneralActionBT::cleanup(bool halted)
+{
+    if(halted)
+    {
+        client_PTR->cancelAllGoals();
+    }
+
+}
+
+void GeneralActionBT::halt()
+{
+    std::cout << name() <<": Halted." << std::endl;
+    cleanup(true);
+    CoroActionNode::halt();
+}
+
+
+
 BT::NodeStatus TimerAction::tick()
 {
     int time_d;
