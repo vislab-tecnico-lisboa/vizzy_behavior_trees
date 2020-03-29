@@ -1,0 +1,9 @@
+#goal definition
+string[] constants
+string[] variables
+---
+#result definition
+string result
+---
+#feedback
+float32 percentage
