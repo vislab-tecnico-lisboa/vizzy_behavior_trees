@@ -5,7 +5,7 @@
   action!
 */
 
-#include <YOURPACKAGE/publisher_template.hpp>
+#include <YOURPACKAGE/INCLUDE_DIR/publisher_template.hpp>
 
 
 std::map<std::string, ros::Publisher> PUBLISHER_TEMPLATE_BT::_publishers;

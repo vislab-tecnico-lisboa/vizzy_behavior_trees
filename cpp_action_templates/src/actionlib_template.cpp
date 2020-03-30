@@ -5,7 +5,7 @@
   action!
 */
 
-#include <YOURPACKAGE/actionlib_template.hpp>
+#include <YOURPACKAGE/INCLUDE_DIR/actionlib_template.hpp>
 
 
 std::map<std::string, std::shared_ptr<ACTIONLIB_TEMPLATE_Client>> ACTIONLIB_TEMPLATE_BT::_ACTIONLIB_TEMPLATE_Clients;

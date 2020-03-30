@@ -5,7 +5,7 @@
   action!
 */
 
-#include <YOURPACKAGE/subscriber_template.hpp>
+#include <YOURPACKAGE/INCLUDE_DIR/subscriber_template.hpp>
 
 
 void SUBSCRIBER_TEMPLATE_BT::callback(const std_msgs::Int16::ConstPtr &msg)
