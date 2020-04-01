@@ -10,6 +10,7 @@
 
 
 #include <YOURPACKAGE/INCLUDE_DIR/asyncaction_template.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 BT::NodeStatus ASYNCACTION_TEMPLATE_BT::tick()
 {

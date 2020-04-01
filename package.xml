@@ -88,6 +88,6 @@
   <exec_depend>tf2_ros</exec_depend>
 
 <export>
-    <behaviortree_cpp bt_lib_plugin="libspeech_actions_dyn.so" />
+    <vizzy_behavior_trees bt_lib_plugin="librosbt_vizzybts_dyn" />
  </export>
 </package>

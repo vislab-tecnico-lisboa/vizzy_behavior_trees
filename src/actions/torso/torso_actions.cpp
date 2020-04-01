@@ -1,4 +1,6 @@
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 
 
 std::map<std::string, ros::Publisher> TorsoRoutineBT::_publishers;

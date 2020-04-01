@@ -1,4 +1,7 @@
 #include <vizzy_behavior_trees/actions/charging_actions.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
+
+
 
 std::map<std::string, std::shared_ptr<ChargeClient>> ChargeActionBT::_chargeClients;
 std::map<std::string, bool> ChargeActionBT::_chargeClientsInitializing;

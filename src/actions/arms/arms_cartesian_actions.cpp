@@ -1,6 +1,7 @@
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include "tf/transform_datatypes.h"
 #include <math.h>
+#include "behaviortree_cpp_v3/bt_factory.h"
 #define MAX_REACH 0.6
 
 

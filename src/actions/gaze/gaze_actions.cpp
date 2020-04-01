@@ -1,4 +1,6 @@
 #include <vizzy_behavior_trees/actions/gaze_actions.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 
 
 BT::NodeStatus GazeActionBT::tick()

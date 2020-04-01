@@ -1,4 +1,6 @@
 #include <vizzy_behavior_trees/actions/move_base_actions.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 
 
 std::map<std::string, std::shared_ptr<MoveBaseClient>> MoveBaseActionBT::_moveBaseClients;

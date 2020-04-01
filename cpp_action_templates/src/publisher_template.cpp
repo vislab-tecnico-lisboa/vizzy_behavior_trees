@@ -6,6 +6,7 @@
 */
 
 #include <YOURPACKAGE/INCLUDE_DIR/publisher_template.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 
 std::map<std::string, ros::Publisher> PUBLISHER_TEMPLATE_BT::_publishers;
