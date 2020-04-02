@@ -61,19 +61,9 @@ include_directories(
 
 
 ## Declare a C++ library
-add_library(vizzy_actions STATIC
-  src/actions/speech/speech_actions.cpp
-  src/actions/navigation/move_base_actions.cpp
-  src/actions/navigation/charging_actions.cpp
-  src/actions/general/general.cpp
-  src/actions/gaze/gaze_actions.cpp
-  src/actions/arms/arms_cartesian_actions.cpp
-  src/actions/arms/arm_routines.cpp
-  src/actions/torso/torso_actions.cpp
-  src/actions/ros_msgs/get_std_msgs.cpp
-  src/actions/ros_msgs/get_geometry_msgs.cpp
-  src/conditions/general/general.cpp
+add_library(vizzy_actions SHARED
   src/rosbt/rosbt_blackboard.cpp
+  src/rosbt/rosbt_loadplugins.cpp
 )
 add_dependencies(vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp vizzy_behavior_trees_generate_messages_cpp)
 target_link_libraries(vizzy_actions PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES})
@@ -85,3 +75,22 @@ target_link_libraries(main_tree_node
   ${catkin_LIBRARIES} ${BEHAVIOR_TREE_LIBRARY} vizzy_actions
 )
 
+
+## Declare a C+ shared libary to use as a plugin by behavior trees
+add_library(rosbt_vizzybts_dyn SHARED
+  src/plugin/vizzy_behavior_trees_lib.cpp
+  src/actions/general/general.cpp
+  src/actions/speech/speech_actions.cpp
+  src/actions/navigation/move_base_actions.cpp
+  src/actions/navigation/charging_actions.cpp
+  src/actions/gaze/gaze_actions.cpp
+  src/actions/arms/arms_cartesian_actions.cpp
+  src/actions/arms/arm_routines.cpp
+  src/actions/torso/torso_actions.cpp
+  src/actions/ros_msgs/get_std_msgs.cpp
+  src/actions/ros_msgs/get_geometry_msgs.cpp
+  src/conditions/general/general.cpp)
+
+add_dependencies(rosbt_vizzybts_dyn vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp vizzy_behavior_trees_generate_messages_cpp)
+target_link_libraries(rosbt_vizzybts_dyn PRIVATE ${BEHAVIOR_TREE_LIBRARY} ${catkin_LIBRARIES} vizzy_actions)
+target_compile_definitions(rosbt_vizzybts_dyn PRIVATE  BT_PLUGIN_EXPORT )

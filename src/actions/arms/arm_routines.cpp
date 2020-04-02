@@ -1,6 +1,9 @@
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
 
+
 std::map<std::string, ros::Publisher> ArmRoutineBT::_publishers;
+
+
 
 ArmRoutineBT::ArmRoutineBT(const std::string& name, const NodeConfiguration& config)
     : SyncActionNode(name, config), nh_()

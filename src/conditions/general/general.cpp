@@ -1,4 +1,6 @@
 #include <vizzy_behavior_trees/conditions/general.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
+
 
 
 BT::NodeStatus CompareInt::tick()

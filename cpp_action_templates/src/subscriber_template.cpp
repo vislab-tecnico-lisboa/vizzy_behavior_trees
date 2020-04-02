@@ -6,6 +6,7 @@
 */
 
 #include <YOURPACKAGE/INCLUDE_DIR/subscriber_template.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 
 void SUBSCRIBER_TEMPLATE_BT::callback(const std_msgs::Int16::ConstPtr &msg)

@@ -6,6 +6,7 @@
 */
 
 #include <YOURPACKAGE/INCLUDE_DIR/coroaction_template.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 
 BT::NodeStatus COROACTION_TEMPLATE_BT::tick()

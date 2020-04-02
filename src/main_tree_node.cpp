@@ -4,22 +4,10 @@
 #include <sstream>
 #include <ros/package.h>
 
-
-//Includes for nodes
-#include <vizzy_behavior_trees/actions/speech_actions.hpp>
-#include <vizzy_behavior_trees/actions/move_base_actions.hpp>
-#include <vizzy_behavior_trees/actions/general.hpp>
-#include <vizzy_behavior_trees/actions/charging_actions.hpp>
-#include <vizzy_behavior_trees/actions/gaze_actions.hpp>
-#include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
-#include <vizzy_behavior_trees/actions/arm_routines.hpp>
-#include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
-#include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
-#include <vizzy_behavior_trees/conditions/general.hpp>
-#include <vizzy_behavior_trees/actions/torso_actions.hpp>
-
 //Fancy logging for Groot
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+
+#include <vizzy_behavior_trees/rosbt_loadplugins.hpp>
 
 
 #include "xmlrpcpp/XmlRpcException.h"
@@ -35,27 +23,10 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
-  factory.registerNodeType<SpeechActionBT>("Speak");
-  factory.registerNodeType<MoveBaseActionBT>("MoveBase");
-  factory.registerNodeType<WaitForXSeconds>("WaitForXSeconds");
-  factory.registerNodeType<ChargeActionBT>("Charge");
-  factory.registerNodeType<CartesianActionBT>("ArmCartesian");
-  factory.registerNodeType<ArmRoutineBT>("ArmRoutines");
-  factory.registerNodeType<CompareInt>("CompareInt");
-  factory.registerNodeType<CompareDouble>("CompareDouble");
-  factory.registerNodeType<CheckBool>("CheckBool");
-  factory.registerNodeType<CheckChargingBT>("CheckCharging");
-  factory.registerNodeType<CheckBatteryBT>("CheckBattery");
-  factory.registerNodeType<GetInt16BT>("GetInt16");
-  factory.registerNodeType<GetPoseArrayBT>("GetPoseArray");
-  factory.registerNodeType<SelectPose>("SelectPose");
-  factory.registerNodeType<GazeActionBT>("GazeAtTarget");
-  factory.registerNodeType<SelectFieldFromPoseStamped>("SelectFieldFromPoseStamped");
-  factory.registerNodeType<TorsoRoutineBT>("MoveTorso");
-  factory.registerNodeType<DebugAction>("DebugAction");
-  factory.registerNodeType<GetFloat64BT>("GetFloat64");
-  factory.registerNodeType<TimerAction>("TimerAction");
-  factory.registerNodeType<GeneralActionBT>("GeneralActionlib");
+
+  std::string this_pkg_path = ros::package::getPath("vizzy_behavior_trees");
+
+  ROSBT::registerFromROSPlugins(factory);
 
   std::string xmlPath;
   double rate;

@@ -6,6 +6,7 @@
 */
 
 #include <YOURPACKAGE/INCLUDE_DIR/actionlib_template.hpp>
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 
 std::map<std::string, std::shared_ptr<ACTIONLIB_TEMPLATE_Client>> ACTIONLIB_TEMPLATE_BT::_ACTIONLIB_TEMPLATE_Clients;
