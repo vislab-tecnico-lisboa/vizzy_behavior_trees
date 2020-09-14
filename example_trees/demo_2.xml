@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
@@ -6,21 +7,24 @@
     <!-- ////////// -->
     <BehaviorTree ID="ChargeST">
         <SequenceStar>
-            <Action utterance="Tenho fome" voice="pt-PT-Wavenet-D" ID="Speak" language="pt_PT" action_name="/gcloud_tts"/>
-            <Action result="SUCCESS" seconds="2" ID="WaitForXSeconds" name="Wait2Seconds"/>
+            <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Tenho fome" voice="pt-PT-Wavenet-D"/>
+            <Action ID="WaitForXSeconds" name="Wait2Seconds" result="SUCCESS" seconds="2"/>
             <Fallback>
                 <SequenceStar>
                     <RetryUntilSuccesful num_attempts="3">
-                        <Action goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" frame_id="map" ID="MoveBase" action_name="move_base" name="Go to first point"/>
+                        <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" name="Go to first point"/>
                     </RetryUntilSuccesful>
-                    <Parallel threshold="2">
+                    <Parallel failure_threshold="1" success_threshold="2">
                         <Repeat num_cycles="10">
-                            <Action utterance="bip bip" voice="pt-PT-Wavenet-D" ID="Speak" language="pt_PT" action_name="/gcloud_tts"/>
+                            <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="bip bip" voice="pt-PT-Wavenet-D"/>
                         </Repeat>
-                        <Action action="charging_action" ID="Charge" action_name="CHARGE"/>
+                        <Action ID="Charge" action="charging_action" action_name="CHARGE"/>
                     </Parallel>
                 </SequenceStar>
             </Fallback>
+            <Action ID="WaitForXSeconds" result="SUCCESS" seconds="10"/>
+            <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Estou cheio, vou sair da estação" voice="pt-PT-Wavenet-D"/>
+            <Action ID="Charge" action="charging_action" action_name="STOP_CHARGE"/>
         </SequenceStar>
     </BehaviorTree>
     <!-- ////////// -->
@@ -36,21 +40,21 @@
             <input_port name="topic"/>
         </Action>
         <Action ID="Charge">
-            <input_port name="action"/>
-            <input_port name="action_name"/>
+            <input_port name="action" type="std::string"/>
+            <input_port name="action_name" type="std::string"/>
         </Action>
         <SubTree ID="ChargeST"/>
         <Action ID="CheckBattery">
-            <output_port type="int" name="battery_state"/>
-            <output_port type="double" name="percentage"/>
-            <input_port type="std::string" name="service_name"/>
+            <output_port name="battery_state" type="int"/>
+            <output_port name="percentage" type="double"/>
+            <input_port name="service_name" type="std::string"/>
         </Action>
         <Condition ID="CheckBool">
             <input_port name="variable"/>
         </Condition>
         <Action ID="CheckCharging">
-            <output_port type="int" name="charging_state"/>
-            <input_port type="std::string" name="service_name"/>
+            <output_port name="charging_state" type="int"/>
+            <input_port name="service_name" type="std::string"/>
         </Action>
         <Condition ID="CompareDouble">
             <input_port name="A"/>
@@ -58,13 +62,13 @@
             <input_port name="Condition"/>
         </Condition>
         <Condition ID="CompareInt">
-            <input_port name="A"/>
-            <input_port name="B"/>
-            <input_port name="Condition"/>
+            <input_port name="A" type="int"/>
+            <input_port name="B" type="int"/>
+            <input_port name="Condition" type="std::string"/>
         </Condition>
         <Action ID="DetectBlocks">
-            <output_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <input_port type="std::string" name="block_topic"/>
+            <output_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void&gt; &gt;"/>
+            <input_port name="block_topic" type="std::string"/>
         </Action>
         <Action ID="DetectFaces">
             <output_port name="faceListOut"/>
@@ -80,24 +84,24 @@
             <input_port name="frame_id"/>
         </Action>
         <Action ID="MoveBase">
-            <input_port name="action_name"/>
-            <input_port name="frame_id"/>
-            <input_port name="goal_pose"/>
+            <input_port name="action_name" type="std::string"/>
+            <input_port name="frame_id" type="std::string"/>
+            <input_port name="goal_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;"/>
         </Action>
         <Action ID="SelectBlock">
-            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
-            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
-            <input_port type="std::string" name="position_in_list"/>
+            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void&gt; &gt;"/>
+            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;"/>
+            <input_port name="position_in_list" type="std::string"/>
         </Action>
         <Action ID="Speak">
-            <input_port type="std::string" name="action_name"/>
-            <input_port type="std::string" name="language"/>
-            <input_port type="std::string" name="utterance"/>
-            <input_port type="std::string" name="voice"/>
+            <input_port name="action_name" type="std::string"/>
+            <input_port name="language" type="std::string"/>
+            <input_port name="utterance" type="std::string"/>
+            <input_port name="voice" type="std::string"/>
         </Action>
         <Action ID="WaitForXSeconds">
-            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
-            <input_port default="5" name="seconds">Time in seconds</input_port>
+            <input_port name="result" type="std::string"/>
+            <input_port name="seconds" type="std::string"/>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->
