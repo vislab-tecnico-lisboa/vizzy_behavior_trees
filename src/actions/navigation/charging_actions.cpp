@@ -91,17 +91,20 @@ void ChargeActionBT::halt()
 BT::NodeStatus CheckBatteryBT::tick()
 {
     vizzy_msgs::BatteryState srv;
-    
+
     if(!client.call(srv))
     {
         return BT::NodeStatus::FAILURE;
     }else{
+
 
         int battery_state = srv.response.battery_state;
         double percentage = srv.response.percentage;
 
         setOutput("battery_state", battery_state);
         setOutput("percentage", percentage);
+
+        return BT::NodeStatus::SUCCESS;
     }
 
 }
@@ -120,5 +123,7 @@ BT::NodeStatus CheckChargingBT::tick()
         int battery_state = srv.response.battery_charging_state;
 
         setOutput("charging_state", battery_state);
+
+        return BT::NodeStatus::SUCCESS;
     }
 }
