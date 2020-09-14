@@ -15,8 +15,8 @@
                         <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" name="Go to first point"/>
                     </RetryUntilSuccesful>
                     <Parallel failure_threshold="1" success_threshold="2">
-                        <Action ID="Charge" action="charging_action" action_name="CHARGE"/>
-                        <Repeat num_cycles="10">
+                        <Action ID="Charge" action="CHARGE" action_name="charging_action"/>
+                        <Repeat num_cycles="5">
                             <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="bip bip" voice="pt-PT-Wavenet-D"/>
                         </Repeat>
                     </Parallel>
@@ -24,7 +24,7 @@
             </Fallback>
             <Action ID="WaitForXSeconds" result="SUCCESS" seconds="10"/>
             <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Estou cheio, vou sair da estação" voice="pt-PT-Wavenet-D"/>
-            <Action ID="Charge" action="charging_action" action_name="STOP_CHARGE"/>
+            <Action ID="Charge" action="STOP_CHARGE" action_name="charging_action"/>
         </SequenceStar>
     </BehaviorTree>
     <!-- ////////// -->
