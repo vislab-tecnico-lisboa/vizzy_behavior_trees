@@ -25,6 +25,10 @@
                 <Condition A="{charge_state}" B="0" Condition="==" ID="CompareInt"/>
                 <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Ajudem-me, tenho fome e não consigo carregar" voice="pt-PT-Wavenet-D"/>
             </Sequence>
+            <Sequence>
+                <Action ID="CallEmptySrv" service_name="/move_base/clear_costmaps"/>
+                <Action ID="WaitForXSeconds" result="SUCCESS" seconds="10"/>
+            </Sequence>
             <Action ID="DebugAction" string="Ok"/>
         </ReactiveFallback>
     </BehaviorTree>
@@ -55,6 +59,9 @@
         <Action ID="ArmRoutines">
             <input_port name="gesture"/>
             <input_port name="topic"/>
+        </Action>
+        <Action ID="CallEmptySrv">
+            <input_port name="service_name"/>
         </Action>
         <Action ID="Charge">
             <input_port name="action" type="std::string"/>

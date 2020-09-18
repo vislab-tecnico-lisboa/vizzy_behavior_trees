@@ -79,6 +79,7 @@ target_link_libraries(main_tree_node
 ## Declare a C+ shared libary to use as a plugin by behavior trees
 add_library(rosbt_vizzybts_dyn SHARED
   src/plugin/vizzy_behavior_trees_lib.cpp
+  src/actions/ros_srvs/call_empty_srv.cpp
   src/actions/general/general.cpp
   src/actions/speech/speech_actions.cpp
   src/actions/navigation/move_base_actions.cpp
