@@ -10,6 +10,7 @@
 #include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
 #include <vizzy_behavior_trees/conditions/general.hpp>
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
+#include <vizzy_behavior_trees/actions/ros_srvs/empty_srv.hpp>
 
 
 BT_REGISTER_NODES(factory)
@@ -35,4 +36,5 @@ BT_REGISTER_NODES(factory)
   factory.registerNodeType<CompareInt>("CompareInt");
   factory.registerNodeType<CompareDouble>("CompareDouble");
   factory.registerNodeType<CheckBool>("CheckBool");
+  factory.registerNodeType<EmptySrvBT>("CallEmptySrv");
 }

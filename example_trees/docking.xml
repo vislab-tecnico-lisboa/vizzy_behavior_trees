@@ -1,52 +1,56 @@
+<?xml version="1.0"?>
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <ReactiveSequence>
             <ReactiveFallback>
                 <Sequence>
-                    <Action ID="CheckBattery" percentage="k_bat_perc" service_name="kokam_battery_state" battery_state="k_bat_state"/>
-                    <Condition B="2" ID="CompareInt" name="Charged or good" A="{k_bat_state}" Condition="&lt;"/>
-                    <Action ID="CheckCharging" service_name="battery_charging_state" charging_state="charge_state"/>
-                    <Condition B="0" ID="CompareInt" name="Undocked" A="{charge_state}" Condition="=="/>
+                    <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="kokam_battery_state"/>
+                    <Condition A="{k_bat_state}" B="2" Condition="&lt;" ID="CompareInt" name="Charged or good"/>
+                    <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
+                    <Condition A="{charge_state}" B="0" Condition="==" ID="CompareInt" name="Undocked"/>
                 </Sequence>
                 <Sequence>
-                    <Condition B="0" ID="CompareInt" name="Fully charged" A="{k_bat_state}" Condition="=="/>
+                    <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="kokam_battery_state"/>
+                    <Condition A="{k_bat_state}" B="0" Condition="==" ID="CompareInt" name="Fully charged"/>
                     <Sequence>
-                        <Condition B="1" ID="CompareInt" name="Charging" A="{charge_state}" Condition="=="/>
-                        <Action action="charging_action" ID="Charge" name="Undock" action_name="STOP_CHARGE"/>
+                        <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
+                        <Condition A="{charge_state}" B="1" Condition="==" ID="CompareInt" name="Charging"/>
+                        <Action ID="Charge" action="charging_action" action_name="STOP_CHARGE" name="Undock"/>
                     </Sequence>
                 </Sequence>
                 <Sequence>
-                    <Condition B="1" ID="CompareInt" name="Not Docked" A="{charge_state}" Condition="!="/>
+                    <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
+                    <Condition A="{charge_state}" B="1" Condition="!=" ID="CompareInt" name="Not Docked"/>
                     <ForceFailure>
                         <Fallback>
                             <RetryUntilSuccesful num_attempts="2">
                                 <SubTree ID="ChargeST"/>
                             </RetryUntilSuccesful>
-                            <Action ID="Speak" voice="Joaquim" action_name="/nuance_speech_tts" utterance="Ajudem, pois não consigo carregar" language="pt_PT"/>
+                            <Action ID="Speak" action_name="gcloud_tts" language="pt_PT" utterance="Ajudem-me, pois não consigo chegar à estação de carregamento" voice="pt-PT-Wavenet-D"/>
                         </Fallback>
                     </ForceFailure>
                 </Sequence>
             </ReactiveFallback>
-            <Action ID="Speak" voice="Joaquim" action_name="/nuance_speech_tts" utterance="Ok" language="pt_PT"/>
+            <Action ID="Speak" action_name="gcloud_tts" language="pt_PT" utterance="A minha bateria está cheia" voice="pt-PT-Wavenet-D"/>
             <Action ID="WaitForXSeconds" result="SUCCESS" seconds="5"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
     <BehaviorTree ID="ChargeST">
         <SequenceStar>
-            <Action ID="Speak" name="Hungry" voice="Joaquim" action_name="nuance_speech_tts" utterance="Tenho fome" language="pt_PT"/>
+            <Action ID="Speak" action_name="gcloud_tts" language="pt_PT" name="Hungry" utterance="Tenho fome" voice="pt-PT-Wavenet-D"/>
             <Action ID="WaitForXSeconds" name="Wait2Seconds" result="SUCCESS" seconds="2"/>
             <Fallback>
                 <SequenceStar>
-                    <RetryUntilSuccesful num_attempts="3">
-                        <Action frame_id="map" ID="MoveBase" name="Go to first point" goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" action_name="move_base"/>
+                    <RetryUntilSuccesful num_attempts="5">
+                        <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-1.7971;-5.5118;0.0;0;0;0.72703;0.68659" name="Go to first point"/>
                     </RetryUntilSuccesful>
-                    <Parallel threshold="2">
+                    <Parallel failure_threshold="1" success_threshold="2">
+                        <Action ID="Charge" action="CHARGE" action_name="charging_action"/>
                         <Repeat num_cycles="10">
-                            <Action ID="Speak" voice="Joaquim" action_name="nuance_speech_ttsnuance_speech_tts" utterance="bip bip" language="pt_PT"/>
+                            <Action ID="Speak" action_name="gcloud_tts" language="pt_PT" utterance="bip bip" voice="pt-PT-Wavenet-D"/>
                         </Repeat>
-                        <Action action="charging_action" ID="Charge" action_name="CHARGE"/>
                     </Parallel>
                 </SequenceStar>
             </Fallback>
@@ -92,7 +96,7 @@
             <input_port name="Condition"/>
         </Condition>
         <Action ID="DetectBlocks">
-            <output_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
+            <output_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void&gt; &gt;"/>
             <input_port name="block_topic" type="std::string"/>
         </Action>
         <Action ID="DetectFaces">
@@ -114,8 +118,8 @@
             <input_port name="goal_pose"/>
         </Action>
         <Action ID="SelectBlock">
-            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
-            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
+            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void&gt; &gt;"/>
+            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;"/>
             <input_port name="position_in_list" type="std::string"/>
         </Action>
         <Action ID="Speak">
@@ -125,8 +129,8 @@
             <input_port name="voice" type="std::string"/>
         </Action>
         <Action ID="WaitForXSeconds">
-            <input_port name="result" default="SUCCESS">Result after specified time: SUCCESS or FAILURE</input_port>
-            <input_port name="seconds" default="5">Time in seconds</input_port>
+            <input_port default="SUCCESS" name="result">Result after specified time: SUCCESS or FAILURE</input_port>
+            <input_port default="5" name="seconds">Time in seconds</input_port>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

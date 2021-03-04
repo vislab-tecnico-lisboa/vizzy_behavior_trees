@@ -78,7 +78,7 @@ class CheckBatteryBT : public BT::SyncActionNode
         {
             return{BT::InputPort<std::string>("service_name"),
                    BT::OutputPort<int>("battery_state"),
-                   BT::OutputPort<double>("battery_percentage")};
+                   BT::OutputPort<double>("percentage")};
         }
 
         ros::NodeHandle nh;
