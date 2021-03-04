@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-    tree.tickRoot();
+    tree.root_node->executeTick();
     loop_rate.sleep();
   }
 
