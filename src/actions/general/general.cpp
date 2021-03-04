@@ -154,7 +154,7 @@ BT::NodeStatus GeneralActionBT::tick()
 
 void GeneralActionBT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
         client_PTR->cancelAllGoals();
     }

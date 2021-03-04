@@ -81,7 +81,7 @@ BT::NodeStatus SpeechActionBT::tick()
 
 void SpeechActionBT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
         client_PTR->cancelAllGoals();
     }

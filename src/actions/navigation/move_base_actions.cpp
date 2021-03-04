@@ -38,7 +38,29 @@ BT::NodeStatus MoveBaseActionBT::tick()
     }
 
     goal.target_pose = pose.value();
-    goal.target_pose.header.frame_id = frame_id.value();
+    
+    if(goal.target_pose.header.frame_id != frame_id.value())
+    {
+
+        try
+        {
+            geometry_msgs::PoseStamped pose_out;
+            auto transform = buffer_.lookupTransform(frame_id.value(), goal.target_pose.header.frame_id, ros::Time(0));
+            tf2::doTransform(pose.value(), pose_out, transform);
+            goal.target_pose = pose_out;
+        }
+        catch (tf2::TransformException &ex)
+        {
+            ROS_WARN("Move base cannot publish to the requested frame_id. Using point's frame_id. Reason: %s",ex.what());
+            goal.target_pose.header.frame_id = frame_id.value();
+
+        }
+
+    }else{
+
+        goal.target_pose.header.frame_id = frame_id.value();
+    }
+
 
     std::cout << "[MoveBase]: Started." << std::endl <<
         "Pose: " << goal << std::endl;
@@ -66,7 +88,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
 void MoveBaseActionBT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
         client_PTR->cancelAllGoals();
     }

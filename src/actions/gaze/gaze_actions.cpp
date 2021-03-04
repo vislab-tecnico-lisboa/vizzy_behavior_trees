@@ -62,7 +62,7 @@ BT::NodeStatus GazeActionBT::tick()
 
 void GazeActionBT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
 
     }

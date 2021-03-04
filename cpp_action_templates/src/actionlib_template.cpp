@@ -103,7 +103,7 @@ BT::NodeStatus ACTIONLIB_TEMPLATE_BT::tick()
 
 void ACTIONLIB_TEMPLATE_BT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
         client_PTR->cancelAllGoals();
     }
