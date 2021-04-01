@@ -20,7 +20,7 @@ class EmptySrvBT : public SyncActionNode
 
     static PortsList providedPorts()
     {
-        return { InputPort<std::string>("service")};
+        return { InputPort<std::string>("service_name")};
     }
 
     NodeStatus tick() override;

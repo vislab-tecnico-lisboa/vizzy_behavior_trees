@@ -4,11 +4,11 @@ EmptySrvBT::EmptySrvBT(const std::string& name, const NodeConfiguration& config)
     : SyncActionNode(name, config)
     {
         ros::NodeHandle nh_;
-        BT::Optional<std::string> service_name = TreeNode::getInput<std::string>("service");
+        BT::Optional<std::string> service_name = TreeNode::getInput<std::string>("service_name");
 
         if(!service_name){
-            throw BT::RuntimeError("missing required inputs [service]: ",
-                                    service_name.error()); 
+            throw BT::RuntimeError("missing required inputs [service_name]: ",
+                                    service_name.error());
         }
 
 

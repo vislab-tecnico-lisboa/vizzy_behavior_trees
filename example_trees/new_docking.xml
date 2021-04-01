@@ -4,8 +4,8 @@
     <BehaviorTree ID="BehaviorTree">
         <ReactiveFallback>
             <Sequence>
-                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/kokam_battery_state"/>
-                <Condition A="{k_bat_state}" B="2" Condition="==" ID="CompareInt"/>
+                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/vizzy_batteries_state"/>
+                <Condition A="{k_bat_state}" B="3" Condition="==" ID="CompareInt"/>
                 <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
                 <Condition A="{charge_state}" B="0" Condition="==" ID="CompareInt"/>
                 <SubTree ID="ChargeST"/>
@@ -13,14 +13,14 @@
             <Sequence>
                 <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
                 <Condition A="{charge_state}" B="1" Condition="==" ID="CompareInt"/>
-                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/kokam_battery_state"/>
+                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/vizzy_batteries_state"/>
                 <Condition A="{k_bat_state}" B="0" Condition="==" ID="CompareInt"/>
                 <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Estou cheio, vou sair da estação" voice="pt-PT-Wavenet-D"/>
                 <Action ID="Charge" action="STOP_CHARGE" action_name="charging_action"/>
             </Sequence>
             <Sequence>
-                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/kokam_battery_state"/>
-                <Condition A="{k_bat_state}" B="2" Condition="==" ID="CompareInt"/>
+                <Action ID="CheckBattery" battery_state="k_bat_state" percentage="k_bat_perc" service_name="/vizzy_batteries_state"/>
+                <Condition A="{k_bat_state}" B="3" Condition="==" ID="CompareInt"/>
                 <Action ID="CheckCharging" charging_state="charge_state" service_name="battery_charging_state"/>
                 <Condition A="{charge_state}" B="0" Condition="==" ID="CompareInt"/>
                 <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Ajudem-me, tenho fome e não consigo carregar" voice="pt-PT-Wavenet-D"/>
@@ -36,7 +36,7 @@
             <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Tenho fome" voice="pt-PT-Wavenet-D"/>
             <Action ID="WaitForXSeconds" name="Wait2Seconds" result="SUCCESS" seconds="2"/>
             <RetryUntilSuccesful num_attempts="3">
-                <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-1.652;-5.940;0.0;0;0;0.895415632486;0.445231226556" name="Go to first point"/>
+                <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-4.058;-5.917;0.0;0.0;0.0;-0.998733285417;0.0503172395835" name="Go to first point"/>
             </RetryUntilSuccesful>
             <Parallel failure_threshold="1" success_threshold="2">
                 <Action ID="Charge" action="CHARGE" action_name="charging_action"/>
