@@ -241,7 +241,7 @@ BT::NodeStatus CartesianActionBT::tick()
 
 void CartesianActionBT::cleanup(bool halted)
 {
-    if(halted)
+    if(halted && client_PTR != NULL)
     {
             vizzy_msgs::CartesianGoal goal;
             goal.type = goal.PREEMPT;

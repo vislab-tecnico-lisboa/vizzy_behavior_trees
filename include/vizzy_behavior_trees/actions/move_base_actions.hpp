@@ -14,6 +14,10 @@
 #include <map>
 #include <vizzy_behavior_trees/rosbt_blackboard.hpp>
 
+#include <tf2_ros/message_filter.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 
@@ -28,10 +32,12 @@ class MoveBaseActionBT : public BT::CoroActionNode
 
 
         MoveBaseClient* client_PTR;
+        tf2_ros::Buffer buffer_;
+        tf2_ros::TransformListener tf2_;
 
 
         MoveBaseActionBT(const std::string& name, const BT::NodeConfiguration& config)
-            : CoroActionNode(name, config)
+            : CoroActionNode(name, config), buffer_(), tf2_(buffer_)
         {
             client_PTR = NULL;
         }
