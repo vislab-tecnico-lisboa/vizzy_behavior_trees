@@ -36,7 +36,7 @@
             <Action ID="Speak" action_name="/gcloud_tts" language="pt_PT" utterance="Tenho fome" voice="pt-PT-Wavenet-D"/>
             <Action ID="WaitForXSeconds" name="Wait2Seconds" result="SUCCESS" seconds="2"/>
             <RetryUntilSuccesful num_attempts="3">
-                <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-4.058;-5.917;0.0;0.0;0.0;-0.998733285417;0.0503172395835" name="Go to first point"/>
+                <Action ID="MoveBase" action_name="move_base" frame_id="map" goal_pose="-4.88723403052;-6.0285904746;0.0;0.0;0.0;0.997843662386;0.0503172395835" name="Go to first point"/>
             </RetryUntilSuccesful>
             <Parallel failure_threshold="1" success_threshold="2">
                 <Action ID="Charge" action="CHARGE" action_name="charging_action"/>
