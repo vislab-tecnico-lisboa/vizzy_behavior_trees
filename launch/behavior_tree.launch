@@ -1,6 +1,8 @@
 <launch>
     <arg name="tree" default="game_tree"/>
+    <arg name="loop_rate" default="0.5"/> <!-- The rate at which the root sends ticks to its children -->
     <node name="main_tree_node" pkg="vizzy_behavior_trees" type="main_tree_node" output="screen">
         <param name="bt_xml" value="$(find vizzy_behavior_trees)/example_trees/$(arg tree).xml"/>
+        <param name="loop_rate" value="$(arg loop_rate)"/>
     </node>
 </launch>
