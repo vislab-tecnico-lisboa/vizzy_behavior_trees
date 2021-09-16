@@ -1,4 +1,4 @@
-#include <vizzy_behavior_trees/actions/ros_msgs/get_geometry_msgs.hpp>
+#include <vizzy_behavior_trees/actions/ros_msgs/pubsub_geometry_msgs.hpp>
 #include <cmath>
 #include "behaviortree_cpp_v3/bt_factory.h"
 
@@ -162,6 +162,63 @@ NodeStatus SelectFieldFromPoseStamped::tick()
     {
         return BT::NodeStatus::FAILURE;
     }
+
+    return BT::NodeStatus::SUCCESS;
+
+}
+
+
+//PubPoseStamped
+
+std::map<std::string, ros::Publisher> PubPoseStampedBT::_publishers;
+
+
+
+PubPoseStampedBT::PubPoseStampedBT(const std::string& name, const NodeConfiguration& config)
+    : SyncActionNode(name, config), nh_()
+{
+}
+
+BT::NodeStatus PubPoseStampedBT::tick()
+{
+
+    BT::Optional<std::string> topic = getInput<std::string>("topic");
+    BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("pose_stamped");
+
+    if(!topic)
+    {
+        ROS_ERROR_STREAM("missing required inputs [topic]: " << topic.error());
+        return BT::NodeStatus::FAILURE;
+
+    }if (!pose)
+    {
+        ROS_ERROR_STREAM("missing required inputs [pose_stamped]: " << pose.error());
+        return BT::NodeStatus::FAILURE;
+    }
+
+
+    auto publisher_pair = _publishers.find(topic.value());
+
+    if(publisher_pair == _publishers.end())
+    {
+        _publishers[topic.value()] = nh_.advertise<geometry_msgs::PoseStamped>(topic.value(), 1);
+        ROS_INFO_STREAM("Created publisher to topic: " << topic.value());
+    }
+
+    publisher_pair = _publishers.find(topic.value());
+    ros::Publisher &pub = publisher_pair->second;
+
+
+    if(pub.getNumSubscribers() < 1)
+    {
+        return BT::NodeStatus::FAILURE;
+
+    }else{
+
+        pub.publish(pose.value());
+        return BT::NodeStatus::SUCCESS;
+    }
+
 
     return BT::NodeStatus::SUCCESS;
 

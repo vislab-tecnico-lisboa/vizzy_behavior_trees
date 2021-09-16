@@ -1,5 +1,5 @@
-#ifndef GET_GEOMETRY_MSGS_HPP_
-#define GET_GEOMETRY_MSGS_HPP_
+#ifndef PUBSUB_GEOMETRY_MSGS_HPP_
+#define PUBSUB_GEOMETRY_MSGS_HPP_
 
 
 #include <behaviortree_cpp_v3/behavior_tree.h>
@@ -77,5 +77,28 @@ class SelectFieldFromPoseStamped : public SyncActionNode
 
         NodeStatus tick() override;
 };
+
+//Publish PoseStamped message
+
+class PubPoseStampedBT : public BT::SyncActionNode
+{
+    public:
+        PubPoseStampedBT(const std::string& name, const BT::NodeConfiguration& config);
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("topic"),
+                   BT::InputPort<geometry_msgs::PoseStamped>("pose_stamped")};
+        }
+
+        ros::NodeHandle nh_;
+
+        BT::NodeStatus tick() override;
+
+    private:
+        std::atomic_bool _halt_requested;
+        static std::map<std::string, ros::Publisher> _publishers;
+};
+
 
 #endif

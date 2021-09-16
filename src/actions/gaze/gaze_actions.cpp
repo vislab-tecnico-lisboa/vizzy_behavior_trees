@@ -6,8 +6,6 @@
 BT::NodeStatus GazeActionBT::tick()
 {
 
-    auto Now = [](){ return std::chrono::high_resolution_clock::now(); };
-
     vizzy_msgs::GazeGoal goal;
 
     BT::Optional<geometry_msgs::PoseStamped> pose = getInput<geometry_msgs::PoseStamped>("fixation_pose");
@@ -15,20 +13,24 @@ BT::NodeStatus GazeActionBT::tick()
     BT::Optional<std::string> action_name = getInput<std::string>("action_name");
 
 
-
     if(!pose)
     {
-        throw BT::RuntimeError("missing required inputs [pose]: ",
-                                pose.error() );
+        ROS_ERROR_STREAM("missing required inputs [pose]: " << pose.error());
+
+        return BT::NodeStatus::FAILURE;
+
     }if (!frame_id)
     {
-        throw BT::RuntimeError("missing required inputs [frame_id]: ",
-                                frame_id.error() );
+        ROS_ERROR_STREAM("missing required inputs [frame_id]: " << frame_id.error());
+
+        return BT::NodeStatus::FAILURE;
 
     }if (!action_name)
     {
-        throw BT::RuntimeError("missing required inputs [action_name]: ",
-                                action_name.error() );
+        ROS_ERROR_STREAM("missing required inputs [action_name]: " << action_name.error());
+
+        return BT::NodeStatus::FAILURE;
+
     }
 
 
@@ -52,7 +54,8 @@ BT::NodeStatus GazeActionBT::tick()
 
     goal.fixation_point.point = poseStamped.pose.position;
 
-    client_PTR->isServerConnected();
+    if(!client_PTR->isServerConnected())
+        return BT::NodeStatus::FAILURE;
 
     client_PTR->sendGoal(goal);
 

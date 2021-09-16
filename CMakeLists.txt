@@ -90,7 +90,7 @@ add_library(rosbt_vizzybts_dyn SHARED
   src/actions/arms/arm_routines.cpp
   src/actions/torso/torso_actions.cpp
   src/actions/ros_msgs/get_std_msgs.cpp
-  src/actions/ros_msgs/get_geometry_msgs.cpp
+  src/actions/ros_msgs/pubsub_geometry_msgs.cpp
   src/conditions/general/general.cpp)
 
 add_dependencies(rosbt_vizzybts_dyn vizzy_actions vizzy_msgs_generate_messages_cpp woz_dialog_msgs_generate_messages_cpp vizzy_behavior_trees_generate_messages_cpp)

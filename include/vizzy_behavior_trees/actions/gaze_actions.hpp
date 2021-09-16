@@ -26,7 +26,8 @@ class GazeActionBT : public BT::CoroActionNode
 
         static BT::PortsList providedPorts()
         {
-            return{BT::InputPort<geometry_msgs::PoseStamped>("fixation_pose"),
+            return{BT::InputPort<std::string>("goal_type"),
+                   BT::InputPort<geometry_msgs::PoseStamped>("fixation_pose"),
                    BT::InputPort<std::string>("frame_id"),
                    BT::InputPort<std::string>("action_name")};
         }
