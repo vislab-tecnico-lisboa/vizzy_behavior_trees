@@ -81,6 +81,7 @@ target_link_libraries(main_tree_node
 add_library(rosbt_vizzybts_dyn SHARED
   src/plugin/vizzy_behavior_trees_lib.cpp
   src/actions/ros_srvs/call_empty_srv.cpp
+  src/actions/ros_srvs/call_trigger_srv.cpp
   src/actions/general/general.cpp
   src/actions/speech/speech_actions.cpp
   src/actions/navigation/move_base_actions.cpp

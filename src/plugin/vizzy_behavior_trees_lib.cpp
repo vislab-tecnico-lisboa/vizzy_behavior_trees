@@ -11,6 +11,7 @@
 #include <vizzy_behavior_trees/conditions/general.hpp>
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
 #include <vizzy_behavior_trees/actions/ros_srvs/empty_srv.hpp>
+#include <vizzy_behavior_trees/actions/ros_srvs/trigger_srv.hpp>
 
 
 BT_REGISTER_NODES(factory)
@@ -37,5 +38,6 @@ BT_REGISTER_NODES(factory)
   factory.registerNodeType<CompareDouble>("CompareDouble");
   factory.registerNodeType<CheckBool>("CheckBool");
   factory.registerNodeType<EmptySrvBT>("CallEmptySrv");
+  factory.registerNodeType<TriggerSrvBT>("CallTriggerSrv");
   factory.registerNodeType<PubPoseStampedBT>("PubPoseStamped");
 }

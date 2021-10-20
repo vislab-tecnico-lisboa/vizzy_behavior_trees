@@ -192,7 +192,7 @@ BT::NodeStatus TimerAction::tick()
         timeout = initial_time + std::chrono::milliseconds(time_d);
         previous_time_d = time_d;
 
-        return BT::NodeStatus::SUCCESS;
+        return BT::NodeStatus::FAILURE;
     }
 
     if(previous_time_d != time_d)
@@ -208,8 +208,7 @@ BT::NodeStatus TimerAction::tick()
 
     }else{
 
-        TimePoint initial_time = RosBlackBoard::Now();
-        timeout = initial_time + std::chrono::milliseconds(time_d);
+        first_time = true;
         return BT::NodeStatus::SUCCESS;
     }
 
