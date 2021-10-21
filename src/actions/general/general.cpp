@@ -111,8 +111,8 @@ BT::NodeStatus GeneralActionBT::tick()
 
     if (!action_name)
     {
-        throw BT::RuntimeError("missing required inputs [action_name]: ",
-                                action_name.error() );
+        ROS_ERROR_STREAM("missing required inputs [action_name]: " << action_name.error());
+        BT::NodeStatus::FAILURE;
     }
 
 
@@ -143,7 +143,9 @@ BT::NodeStatus GeneralActionBT::tick()
         auto result = setOutput("result", action_result->result);
         
         return BT::NodeStatus::SUCCESS;
+
     }else{
+        
         return BT::NodeStatus::FAILURE;
     }
 
