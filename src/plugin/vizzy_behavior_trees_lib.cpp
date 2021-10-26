@@ -7,7 +7,7 @@
 #include <vizzy_behavior_trees/actions/arm_cartesian_actions.hpp>
 #include <vizzy_behavior_trees/actions/arm_routines.hpp>
 #include <vizzy_behavior_trees/actions/ros_msgs/pubsub_geometry_msgs.hpp>
-#include <vizzy_behavior_trees/actions/ros_msgs/get_std_msgs.hpp>
+#include <vizzy_behavior_trees/actions/ros_msgs/pubsub_std_msgs.hpp>
 #include <vizzy_behavior_trees/conditions/general.hpp>
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
 #include <vizzy_behavior_trees/actions/ros_srvs/empty_srv.hpp>
@@ -40,4 +40,6 @@ BT_REGISTER_NODES(factory)
   factory.registerNodeType<EmptySrvBT>("CallEmptySrv");
   factory.registerNodeType<TriggerSrvBT>("CallTriggerSrv");
   factory.registerNodeType<PubPoseStampedBT>("PubPoseStamped");
+  factory.registerNodeType<PubStringBT>("PubString");
+
 }
