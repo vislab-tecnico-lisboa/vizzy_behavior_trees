@@ -15,16 +15,16 @@
             <input_port name="action_name"/>
         </Action>
         <Action ID="CheckBattery">
-            <output_port name="battery_state" type="int"/>
-            <output_port name="percentage" type="double"/>
-            <input_port name="service_name" type="std::string"/>
+            <output_port type="int" name="battery_state"/>
+            <output_port type="double" name="percentage"/>
+            <input_port type="std::string" name="service_name"/>
         </Action>
         <Condition ID="CheckBool">
             <input_port name="variable"/>
         </Condition>
         <Action ID="CheckCharging">
-            <output_port name="charging_state" type="int"/>
-            <input_port name="service_name" type="std::string"/>
+            <output_port type="int" name="charging_state"/>
+            <input_port type="std::string" name="service_name"/>
         </Action>
         <Condition ID="CompareDouble">
             <input_port name="A"/>
@@ -37,12 +37,15 @@
             <input_port name="Condition"/>
         </Condition>
         <Action ID="DebugAction">
-            <input_port name="string" type="std::string"/>
+            <input_port type="std::string" name="string"/>
         </Action>
         <Action ID="Destroy"/>
         <Action ID="DetectFaces">
             <output_port name="faceListOut"/>
             <input_port name="face_topic"/>
+        </Action>
+        <Action ID="ExecCmd">
+            <input_port name="cmd"/>
         </Action>
         <Action ID="FaceCounter">
             <input_port name="faceListIn"/>
@@ -60,8 +63,8 @@
             <input_port name="variables">A coma separated list of variables.</input_port>
         </Action>
         <Action ID="GetFloat64">
-            <output_port name="number" type="double"/>
-            <input_port name="topic" type="std::string"/>
+            <output_port type="double" name="number"/>
+            <input_port type="std::string" name="topic"/>
         </Action>
         <Action ID="GetInt16">
             <output_port name="number"/>
@@ -91,11 +94,16 @@
             <input_port name="message"/>
             <input_port name="topic"/>
         </Action>
+        <Action ID="RandInt">
+            <input_port name="max"/>
+            <input_port name="min"/>
+            <output_port name="output"/>
+        </Action>
         <Action ID="ResetVars"/>
         <Action ID="SelectBlock">
-            <input_port name="block_list" type="social_cues::BlockList_&lt;std::allocator&lt;void> >"/>
-            <output_port name="block_pose" type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >"/>
-            <input_port name="position_in_list" type="std::string"/>
+            <input_port type="social_cues::BlockList_&lt;std::allocator&lt;void> >" name="block_list"/>
+            <output_port type="geometry_msgs::PoseStamped_&lt;std::allocator&lt;void> >" name="block_pose"/>
+            <input_port type="std::string" name="position_in_list"/>
         </Action>
         <Action ID="SelectFieldFromPoseStamped">
             <input_port name="field"/>
@@ -116,6 +124,13 @@
             <input_port name="language"/>
             <input_port name="utterance"/>
             <input_port name="voice"/>
+        </Action>
+        <Action ID="StringSrv">
+            <input_port name="arg1"/>
+            <input_port name="arg2"/>
+            <input_port name="cmd"/>
+            <output_port name="message"/>
+            <input_port name="service_name"/>
         </Action>
         <Action ID="TimerAction">
             <input_port name="s_between_success">Time (s) before this node returns SUCCESS. It will return FAILURE in the meanwhile</input_port>

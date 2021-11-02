@@ -107,4 +107,41 @@ class TimerAction : public BT::SyncActionNode
     
 };
 
+
+class RandInt : public BT::SyncActionNode
+{
+    public:
+        RandInt(const std::string& name, const BT::NodeConfiguration& config)
+        : SyncActionNode(name, config)
+        {}
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<int>("min"),
+                   BT::InputPort<int>("max"),
+                   BT::OutputPort<std::string>("output")};
+        }
+
+        BT::NodeStatus tick() override;
+
+};
+
+
+class ExecCmdBT : public BT::SyncActionNode
+{
+    public:
+        ExecCmdBT(const std::string& name, const BT::NodeConfiguration& config)
+        : SyncActionNode(name, config)
+        {}
+
+        static BT::PortsList providedPorts()
+        {
+            return{BT::InputPort<std::string>("cmd")};
+        }
+
+
+        BT::NodeStatus tick() override;
+};
+
+
 #endif

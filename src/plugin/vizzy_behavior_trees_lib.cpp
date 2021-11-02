@@ -12,6 +12,8 @@
 #include <vizzy_behavior_trees/actions/torso_actions.hpp>
 #include <vizzy_behavior_trees/actions/ros_srvs/empty_srv.hpp>
 #include <vizzy_behavior_trees/actions/ros_srvs/trigger_srv.hpp>
+#include <vizzy_behavior_trees/actions/ros_srvs/stringsrv_srv.hpp>
+
 
 
 BT_REGISTER_NODES(factory)
@@ -41,5 +43,8 @@ BT_REGISTER_NODES(factory)
   factory.registerNodeType<TriggerSrvBT>("CallTriggerSrv");
   factory.registerNodeType<PubPoseStampedBT>("PubPoseStamped");
   factory.registerNodeType<PubStringBT>("PubString");
+  factory.registerNodeType<RandInt>("RandInt");
+  factory.registerNodeType<ExecCmdBT>("ExecCmd");
+  factory.registerNodeType<StringSrvBT>("StringSrv");
 
 }

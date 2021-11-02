@@ -1,6 +1,6 @@
 #include <vizzy_behavior_trees/actions/general.hpp>
 #include "behaviortree_cpp_v3/bt_factory.h"
-
+#include <random>
 
 
 
@@ -289,4 +289,57 @@ void WaitForXSeconds::halt()
 {
     cleanup(true);
     CoroActionNode::halt();
+}
+
+
+BT::NodeStatus RandInt::tick()
+{
+
+    BT::Optional<int> min = getInput<int>("min");
+    BT::Optional<int> max = getInput<int>("max");
+
+    if(!min)
+    {
+        ROS_ERROR_STREAM("missing required inputs [min]: " << min.error());
+        return BT::NodeStatus::FAILURE;
+    }
+
+    if(!max)
+    {
+        ROS_ERROR_STREAM("missing required inputs [max]: " << max.error());
+        return BT::NodeStatus::FAILURE;
+    }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(min.value(), max.value());
+
+    int generated = distrib(gen);
+    
+    auto result = setOutput("output", std::to_string(generated));
+
+    if(!result)
+    {
+        std::cout << result.error() << std::endl;
+        return BT::NodeStatus::FAILURE;
+    }
+
+    return BT::NodeStatus::SUCCESS;
+
+}
+
+BT::NodeStatus ExecCmdBT::tick()
+{
+    BT::Optional<std::string> cmd = getInput<std::string>("cmd");
+
+    if(!cmd)
+    {
+        ROS_ERROR_STREAM("missing required inputs [string]: " << cmd.error() );
+    }
+
+    if(!system(cmd.value().c_str()))
+        return BT::NodeStatus::SUCCESS;
+    else
+        return BT::NodeStatus::FAILURE;
+
 }

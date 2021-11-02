@@ -21,6 +21,12 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   tf2
   tf2_ros
+  message_generation
+)
+
+add_service_files(
+  FILES
+  StringSrv.srv
 )
 
 add_action_files(
@@ -82,6 +88,7 @@ add_library(rosbt_vizzybts_dyn SHARED
   src/plugin/vizzy_behavior_trees_lib.cpp
   src/actions/ros_srvs/call_empty_srv.cpp
   src/actions/ros_srvs/call_trigger_srv.cpp
+  src/actions/ros_srvs/call_stringsrv_srv.cpp
   src/actions/general/general.cpp
   src/actions/speech/speech_actions.cpp
   src/actions/navigation/move_base_actions.cpp

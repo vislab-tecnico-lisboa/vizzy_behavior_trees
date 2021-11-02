@@ -39,7 +39,7 @@ BT::NodeStatus MoveBaseActionBT::tick()
 
     goal.target_pose = pose.value();
     
-    if(goal.target_pose.header.frame_id != frame_id.value())
+    if(goal.target_pose.header.frame_id != "" && goal.target_pose.header.frame_id != frame_id.value())
     {
 
         try
