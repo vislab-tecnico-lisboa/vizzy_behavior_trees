@@ -19,6 +19,7 @@ class GetPoseArrayBT : public SyncActionNode
         geometry_msgs::PoseArray poseList;
         ros::Subscriber sub_;
         ros::CallbackQueue queue_;
+        bool initialized_ = false;
 
         GetPoseArrayBT(const std::string& name, const NodeConfiguration& config);
 

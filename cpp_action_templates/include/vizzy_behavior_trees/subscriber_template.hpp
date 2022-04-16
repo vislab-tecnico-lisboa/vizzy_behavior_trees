@@ -27,6 +27,7 @@ class SUBSCRIBER_TEMPLATE_BT : public SyncActionNode
         SUBSCRIBER_MESSAGE_TYPE last_msg;
         ros::Subscriber sub_;
         ros::CallbackQueue queue_;
+        bool initialized_ = false;
 
         SUBSCRIBER_TEMPLATE_BT(const std::string& name, const NodeConfiguration& config);
 

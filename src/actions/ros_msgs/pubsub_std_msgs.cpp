@@ -8,6 +8,9 @@ void GetInt16BT::callback(const std_msgs::Int16::ConstPtr &msg)
 {
 
     this->number = msg->data;
+
+    if(!initialized_)
+        initialized_ = true;
 }
 
 
@@ -35,9 +38,11 @@ BT::NodeStatus GetInt16BT::tick()
         return BT::NodeStatus::FAILURE;
     }
 
-    setStatus(BT::NodeStatus::RUNNING);
-    queue_.callOne();
+    queue_.callAvailable();
 
+    /*If no data was received we cannot make an computations*/
+    if(!initialized_)
+        return BT::NodeStatus::FAILURE;
 
     auto result = setOutput("number", this->number);
 
@@ -55,6 +60,9 @@ BT::NodeStatus GetInt16BT::tick()
 void GetFloat64BT::callback(const std_msgs::Float64::ConstPtr &msg)
 {
     this->number = msg->data;
+
+    if(!initialized_)
+        initialized_ = true;
 }
 
 
@@ -83,8 +91,11 @@ BT::NodeStatus GetFloat64BT::tick()
         return BT::NodeStatus::FAILURE;
     }
 
-    setStatus(BT::NodeStatus::RUNNING);
-    queue_.callOne();
+    queue_.callAvailable();
+
+    /*If no data was received we cannot make an computations*/
+    if(!initialized_)
+        return BT::NodeStatus::FAILURE;
 
 
     auto result = setOutput("number", this->number);

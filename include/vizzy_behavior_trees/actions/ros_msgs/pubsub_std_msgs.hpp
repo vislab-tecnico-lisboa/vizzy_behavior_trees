@@ -21,6 +21,7 @@ class GetInt16BT : public SyncActionNode
         int number;
         ros::Subscriber sub_;
         ros::CallbackQueue queue_;
+        bool initialized_ = false;
 
         GetInt16BT(const std::string& name, const NodeConfiguration& config);
 
@@ -43,6 +44,7 @@ class GetFloat64BT : public SyncActionNode
         double number;
         ros::Subscriber sub_;
         ros::CallbackQueue queue_;
+        bool initialized_ = false;
 
         GetFloat64BT(const std::string& name, const NodeConfiguration& config);
 

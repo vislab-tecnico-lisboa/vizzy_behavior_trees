@@ -23,6 +23,10 @@ void GetPoseArrayBT::callback(const geometry_msgs::PoseArray::ConstPtr &msg)
 
     std::sort (this->poseList.poses.begin(), this->poseList.poses.end(), comparePoseStamped);
 
+
+    if(!initialized_)
+        initialized_ = true;
+
 }
 
 
@@ -51,9 +55,11 @@ BT::NodeStatus GetPoseArrayBT::tick()
         return BT::NodeStatus::FAILURE;
     }
 
-    setStatus(BT::NodeStatus::RUNNING);
-    queue_.callOne();
+    queue_.callAvailable();
 
+    /*If no data was received we cannot make an computations*/
+    if(!initialized_)
+        return BT::NodeStatus::FAILURE;
 
     auto result = setOutput("pose_array", this->poseList);
 

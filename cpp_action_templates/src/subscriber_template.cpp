@@ -13,6 +13,9 @@ void SUBSCRIBER_TEMPLATE_BT::callback(const std_msgs::Int16::ConstPtr &msg)
 {
 
     this->last_msg = *msg;
+
+    if(!initialized_)
+        initialized_ = true;
 }
 
 
@@ -43,7 +46,11 @@ BT::NodeStatus SUBSCRIBER_TEMPLATE_BT::tick()
     setStatus(BT::NodeStatus::RUNNING);
 
     /*Each tick will check for a new message and update it. if there are some publishers*/
-    queue_.callOne();
+    queue_.callAvailable();
+
+    /*If no data was received we cannot make an computations*/
+    if(!initialized_)
+        return BT::NodeStatus::FAILURE;
 
 
     auto result = setOutput("message", this->last_msg);
